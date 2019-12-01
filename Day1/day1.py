@@ -4,7 +4,7 @@
 
 import unittest
 
-class TestMethods(unittest.TestCase):
+class TestClass(unittest.TestCase):
     
     def test_day1_1(self):
         a = module(12)
@@ -18,7 +18,21 @@ class TestMethods(unittest.TestCase):
     def test_day1_4(self):
         a = module(100756)
         self.assertEqual(a.requiredFuel(), 33583)
-        
+
+
+class TestMethods(unittest.TestCase):
+    
+    def test_day1_1(self):
+        self.assertEqual(calcFuel(12), 2)
+    def test_day1_2(self):
+        self.assertEqual(calcFuel(14), 2)
+    def test_day1_3(self):
+        self.assertEqual(calcFuel(1969), 654)
+    def test_day1_4(self):
+        self.assertEqual(calcFuel(100756), 33583)
+
+def calcFuel(mass):
+    return int(mass / 3) - 2
 
 class module:
     def __init__(self, mass=0):
