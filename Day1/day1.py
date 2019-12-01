@@ -46,7 +46,8 @@ class TestFullFuel(unittest.TestCase):
     
 
 def calcFuel(mass):
-    return int(mass / 3) - 2
+    fuel = int(mass / 3) - 2
+    return max(0, fuel)
 
 # def calcFullFuel(mass):
 #     fuel = calcFuel(mass)
@@ -60,10 +61,14 @@ def calcFuel(mass):
 #     return fuel
 
 def calcFullFuel(mass):
+    '''
+    Fuel itself requires fuel just like a module - take its mass, divide by three, round down, and subtract 2. However, that fuel also requires fuel, and that fuel requires fuel, and so on. Any mass that would require negative fuel should instead be treated as if it requires zero fuel; the remaining mass, if any, is instead handled by wishing really hard, which has no mass and is outside the scope of this calculation.
+    '''
     if mass <= 0:
         return 0
     else:
-        fuel = calcFullFuel(mass)
+        fuel = calcFuel(mass)
+        print ("Fuel: {}".format(fuel))
         return fuel + calcFullFuel(fuel)
 
 class module:
