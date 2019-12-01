@@ -68,7 +68,7 @@ def calcFullFuel(mass):
         return 0
     else:
         fuel = calcFuel(mass)
-        print ("Fuel: {}".format(fuel))
+        #print ("Fuel: {}".format(fuel))
         return fuel + calcFullFuel(fuel)
 
 class module:
@@ -91,13 +91,14 @@ def inputToIntList(fname='input'):
 
 if __name__ == '__main__':
     modulMasses = inputToIntList()
-    for mass in modulMasses:
-        #print(mass)
-        a = module(mass)
-        a.print_fuel()
+    # for mass in modulMasses:
+    #     #print(mass)
+    #     a = module(mass)
+    #     a.print_fuel()
     print ("______________")
-    #fuelcalculator = lambda x: calcFuel(x)
     fuelList = list(map(lambda x: calcFuel(x), modulMasses))
-    print(fuelList)
+    fullFuelList = list(map(lambda x: calcFullFuel(x), modulMasses))
+    #print(fuelList)
     print(sum(fuelList)) #should return 3299598
+    print(sum(fullFuelList)) #should return 4946546
     #unittest.main()
