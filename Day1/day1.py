@@ -6,33 +6,47 @@ import unittest
 
 class TestClass(unittest.TestCase):
     
-    def test_day1_1(self):
+    def test_day1_1_1(self):
         a = module(12)
         self.assertEqual(a.requiredFuel(), 2)
-    def test_day1_2(self):
+    def test_day1_1_2(self):
         a = module(14)
         self.assertEqual(a.requiredFuel(), 2)
-    def test_day1_3(self):
+    def test_day1_1_3(self):
         a = module(1969)
         self.assertEqual(a.requiredFuel(), 654)
-    def test_day1_4(self):
+    def test_day1_1_4(self):
         a = module(100756)
         self.assertEqual(a.requiredFuel(), 33583)
 
 
 class TestMethods(unittest.TestCase):
     
-    def test_day1_1(self):
+    def test_day1_1_5(self):
         self.assertEqual(calcFuel(12), 2)
-    def test_day1_2(self):
+    def test_day1_1_6(self):
         self.assertEqual(calcFuel(14), 2)
-    def test_day1_3(self):
+    def test_day1_1_7(self):
         self.assertEqual(calcFuel(1969), 654)
-    def test_day1_4(self):
+    def test_day1_1_8(self):
         self.assertEqual(calcFuel(100756), 33583)
+
+class TestFullFuel(unittest.TestCase):
+
+    def test_day1_2_1(self):
+        self.assertEqual(calcFullFuel(14), 2)
+    def test_day1_2_2(self):
+        self.assertEqual(calcFullFuel(1969), 966)
+    def test_day1_2_3(self):
+        self.assertEqual(calcFullFuel(100756),50346)
+    
 
 def calcFuel(mass):
     return int(mass / 3) - 2
+
+def calcFullFuel(mass):
+    fuel = calcFuel(mass)
+    return fuel
 
 class module:
     def __init__(self, mass=0):
@@ -59,8 +73,8 @@ if __name__ == '__main__':
         a = module(mass)
         a.print_fuel()
     print ("______________")
-    fuelcalculator = lambda x: calcFuel(x)
-    fuelList = list(map(fuelcalculator, modulMasses))
+    #fuelcalculator = lambda x: calcFuel(x)
+    fuelList = list(map(lambda x: calcFuel(x), modulMasses))
     print(fuelList)
     print(sum(fuelList)) #should return 3299598
     #unittest.main()
