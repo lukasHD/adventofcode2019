@@ -57,5 +57,10 @@ if __name__ == '__main__':
     for mass in modulMasses:
         #print(mass)
         a = module(mass)
-        a.print_fuel()    
+        a.print_fuel()
+    print ("______________")
+    fuelcalculator = lambda x: calcFuel(x)
+    fuelList = list(map(fuelcalculator, modulMasses))
+    print(fuelList)
+    print(sum(fuelList)) #should return 3299598
     #unittest.main()
