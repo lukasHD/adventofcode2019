@@ -39,14 +39,32 @@ class TestFullFuel(unittest.TestCase):
         self.assertEqual(calcFullFuel(1969), 966)
     def test_day1_2_3(self):
         self.assertEqual(calcFullFuel(100756),50346)
+    def test_negative_full_fuel(self):
+        self.assertEqual(calcFullFuel(-10),0)
+    def test_zero_full_fuel(self):
+        self.assertEqual(calcFullFuel(0),0)
     
 
 def calcFuel(mass):
     return int(mass / 3) - 2
 
+# def calcFullFuel(mass):
+#     fuel = calcFuel(mass)
+#     if fuel < 0:
+#         fuel = 0
+#     print("For mass {} required Fuel is {}".format(mass, fuel))
+#     else:
+#         additionalFuel = calcFullFuel(fuel)
+#         if additionalFuel > 0:
+#             fuel = fuel + calcFullFuel(fuel)
+#     return fuel
+
 def calcFullFuel(mass):
-    fuel = calcFuel(mass)
-    return fuel
+    if mass <= 0:
+        return 0
+    else:
+        fuel = calcFullFuel(mass)
+        return fuel + calcFullFuel(fuel)
 
 class module:
     def __init__(self, mass=0):
