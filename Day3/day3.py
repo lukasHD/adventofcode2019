@@ -36,9 +36,24 @@ def getNextCorner(pos, command):
 def manhattanDistance(t, s=(0,0)):
     return abs(t[0] - s[0]) + abs(t[1] - s[1])
 
+def getIntersection(start1, stop1, start2, stop2):
+    '''
+    continue here
+    '''
+    if True:
+        return (0,0)
+    elif:
+        return None
+
 def runPartOne(L1, L2):
     parsedL1 = parseInput(L1)
     parsedL2 = parseInput(L2)
+    edgesL1 = [(0,0)]
+    edgesL2 = [(0,0)]
+    for command in parsedL1:
+        edgesL1.append(getNextCorner(edgesL1[-1], command))
+    for command in parsedL2:
+        edgesL2.append(getNextCorner(edgesL2[-1], command))
     return 0
 
 def runPartTwo(L1, L2):

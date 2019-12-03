@@ -42,6 +42,11 @@ class TestRunner(unittest.TestCase):
         self.assertEqual(day3.parseInput(["R8","U5","L5","D3"]),[("R", 8), ("U", 5), ("L", 5), ("D", 3)])
         self.assertRaises(TypeError, day3.parseInput, ["C8","U5","L5","D3"])
 
+    def test_getNextCorner(self):
+        self.assertEqual(day3.getNextCorner((1,2),["R", 8]), ( 9, 2))
+        self.assertEqual(day3.getNextCorner((1,2),["L", 8]), (-7, 2))
+        self.assertEqual(day3.getNextCorner((1,2),["U", 8]), ( 1,10))
+        self.assertEqual(day3.getNextCorner((1,2),["D", 8]), ( 1,-6))
 
     def test_day3_1_1(self):
         self.assertEqual(day3.runPartOne(["R8","U5","L5","D3"],["U7","R6","D4","L4"]), 6)
