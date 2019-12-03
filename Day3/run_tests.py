@@ -5,7 +5,39 @@ import unittest
 
 
 class TestRunner(unittest.TestCase):
-    
+
+    def test_manhattanDistance(self):
+        self.assertEqual(day3.manhattanDistance([ 0, 0]), 0)
+        self.assertEqual(day3.manhattanDistance([ 0, 1]), 1)
+        self.assertEqual(day3.manhattanDistance([ 1, 0]), 1)
+        self.assertEqual(day3.manhattanDistance([ 0,-1]), 1)
+        self.assertEqual(day3.manhattanDistance([-1, 0]), 1)
+        self.assertEqual(day3.manhattanDistance([ 1, 1]), 2)
+        self.assertEqual(day3.manhattanDistance([ 1,-1]), 2)
+        self.assertEqual(day3.manhattanDistance([-1, 1]), 2)
+        self.assertEqual(day3.manhattanDistance([-1,-1]), 2)
+        self.assertEqual(day3.manhattanDistance([ 1, 1], [ 2, 2]), 2)
+        self.assertEqual(day3.manhattanDistance([ 2, 2], [ 1, 1]), 2)
+        self.assertEqual(day3.manhattanDistance([ 1, 1], [-1,-1]), 4)
+        self.assertEqual(day3.manhattanDistance([-1,-1], [ 1, 1]), 4)
+
+    def test_parseElement(self):
+        self.assertEqual(day3.parseElement(  "R8"), ("R",  8))
+        self.assertEqual(day3.parseElement( "R12"), ("R", 12))
+        self.assertEqual(day3.parseElement("R456"), ("R",456))
+        self.assertEqual(day3.parseElement(  "L8"), ("L",  8))
+        self.assertEqual(day3.parseElement( "L12"), ("L", 12))
+        self.assertEqual(day3.parseElement("L456"), ("L",456))
+        self.assertEqual(day3.parseElement(  "U8"), ("U",  8))
+        self.assertEqual(day3.parseElement( "U12"), ("U", 12))
+        self.assertEqual(day3.parseElement("U456"), ("U",456))
+        self.assertEqual(day3.parseElement(  "D8"), ("D",  8))
+        self.assertEqual(day3.parseElement( "D12"), ("D", 12))
+        self.assertEqual(day3.parseElement("D456"), ("D",456))
+        self.assertRaises(TypeError, day3.parseElement, "asdf")
+        self.assertRaises(TypeError, day3.parseElement, "A123")
+        self.assertRaises(ValueError, day3.parseElement, "UASD")
+
     def test_day3_1_1(self):
         self.assertEqual(day3.runPartOne(["R8","U5","L5","D3"],["U7","R6","D4","L4"]), 6)
     
