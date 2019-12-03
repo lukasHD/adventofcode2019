@@ -38,6 +38,11 @@ class TestRunner(unittest.TestCase):
         self.assertRaises(TypeError, day3.parseElement, "A123")
         self.assertRaises(ValueError, day3.parseElement, "UASD")
 
+    def test_parseInput(self):
+        self.assertEqual(day3.parseInput(["R8","U5","L5","D3"]),[("R", 8), ("U", 5), ("L", 5), ("D", 3)])
+        self.assertRaises(TypeError, day3.parseInput, ["C8","U5","L5","D3"])
+
+
     def test_day3_1_1(self):
         self.assertEqual(day3.runPartOne(["R8","U5","L5","D3"],["U7","R6","D4","L4"]), 6)
     

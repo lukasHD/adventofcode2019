@@ -15,13 +15,30 @@ def parseElement(E):
     return (direction, lenght)
 
 def parseInput(L):
-    out = []
+    out = [parseElement(x) for x in L]
     return out
+
+def getNextCorner(pos, command):
+    x,y = pos
+    c,d = command
+    if c == "R":
+        x += d
+    elif c == "L":
+        x -= d
+    elif c == "U":
+        y += d
+    elif c == "D":
+        y -= d
+    else:
+        raise TypeError()
+    return (x,y)
 
 def manhattanDistance(t, s=(0,0)):
     return abs(t[0] - s[0]) + abs(t[1] - s[1])
 
 def runPartOne(L1, L2):
+    parsedL1 = parseInput(L1)
+    parsedL2 = parseInput(L2)
     return 0
 
 def runPartTwo(L1, L2):
