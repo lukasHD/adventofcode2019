@@ -38,7 +38,7 @@ def getNextCorner(pos, command):
 
 def getWire(commandList, startPos=(0,0)):
     x,y = startPos
-    wire ={startPos}
+    wire =[startPos]
     for command in commandList:
         c,d = command
         for _ in range(d):
@@ -52,39 +52,53 @@ def getWire(commandList, startPos=(0,0)):
                 y -= 1
             else:
                 raise TypeError()
-            wire.add((x,y))
+            wire.append((x,y))
     return wire
 
 def manhattanDistance(t, s=(0,0)):
     return abs(t[0] - s[0]) + abs(t[1] - s[1])
 
-def getIntersection(start1, stop1, start2, stop2):
-    '''
-    continue here
-    '''
-    if True:
-        return (0,0)
-    else:
-        return None
+def getIntersections(wire1, wire2):
+    set1 = set(wire1)
+    set2 = set(wire2)
+    points = set1.intersection(set2)
+    points.remove((0,0))
+    #print(points)
+    return(points)
+    
+def getDistanceToPointOnWire(wire, point):
+    return wire.index(point)
 
 def runPartOne(L1, L2):
     parsedL1 = parseInput(L1)
     parsedL2 = parseInput(L2)
     wire1 = getWire(parsedL1)
     wire2 = getWire(parsedL2)
-    points = wire1.intersection(wire2)
-    points.remove((0,0))
-    print(points)
+    points = getIntersections(wire1, wire2)
     distances = [manhattanDistance(x) for x in points]
-    print(distances)
+    #print(distances)
     res = min(distances)
     print(res)
     return res
 
 def runPartTwo(L1, L2):
-    return 0
+    parsedL1 = parseInput(L1)
+    parsedL2 = parseInput(L2)
+    wire1 = getWire(parsedL1)
+    wire2 = getWire(parsedL2)
+    points = getIntersections(wire1, wire2)
+    sumDist = []
+    for point in points:
+        d1 = getDistanceToPointOnWire(wire1, point)
+        d2 = getDistanceToPointOnWire(wire2, point)
+        #print("{}: {} + {} = {}".format(point, d1, d2, d1+d2))
+        sumDist.append(d1+d2)
+    res = min(sumDist)
+    print(res)
+    return res
+
 
 if __name__ == '__main__':
     L1,L2 = loadInput()
     runPartOne(L1, L2)
-    #runPartTwo(L1, L2)
+    runPartTwo(L1, L2)
