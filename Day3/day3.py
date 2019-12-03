@@ -1,4 +1,7 @@
 # day3 
+import sys 
+sys.path.append('../helper')
+from helper import timer
 
 def loadInput(fname='input'):
     with open(fname, 'r') as f:
@@ -33,6 +36,25 @@ def getNextCorner(pos, command):
         raise TypeError()
     return (x,y)
 
+def getWire(commandList, startPos=(0,0)):
+    x,y = startPos
+    wire ={startPos}
+    for command in commandList:
+        c,d = command
+        for _ in range(d):
+            if c == "R":
+                x += 1
+            elif c == "L":
+                x -= 1
+            elif c == "U":
+                y += 1
+            elif c == "D":
+                y -= 1
+            else:
+                raise TypeError()
+            wire.add((x,y))
+    return wire
+
 def manhattanDistance(t, s=(0,0)):
     return abs(t[0] - s[0]) + abs(t[1] - s[1])
 
@@ -42,19 +64,22 @@ def getIntersection(start1, stop1, start2, stop2):
     '''
     if True:
         return (0,0)
-    elif:
+    else:
         return None
 
 def runPartOne(L1, L2):
     parsedL1 = parseInput(L1)
     parsedL2 = parseInput(L2)
-    edgesL1 = [(0,0)]
-    edgesL2 = [(0,0)]
-    for command in parsedL1:
-        edgesL1.append(getNextCorner(edgesL1[-1], command))
-    for command in parsedL2:
-        edgesL2.append(getNextCorner(edgesL2[-1], command))
-    return 0
+    wire1 = getWire(parsedL1)
+    wire2 = getWire(parsedL2)
+    points = wire1.intersection(wire2)
+    points.remove((0,0))
+    print(points)
+    distances = [manhattanDistance(x) for x in points]
+    print(distances)
+    res = min(distances)
+    print(res)
+    return res
 
 def runPartTwo(L1, L2):
     return 0
