@@ -35,7 +35,7 @@ def printIndexValue(L, pos=0):
         print("{:^{width}s},".format(str(idx), width=longest+1),end='')
     print(")")
 
-def runIntcode(intInput):
+def runIntcode(intInput, debug=True):
     ignore = 0
     for idx, val in enumerate(intInput):
         if ignore > 0:
@@ -44,24 +44,24 @@ def runIntcode(intInput):
         #print("index is %d and value is %s" % (idx, val))
         #print("Index: {}".format(idx))
         #print(intInput)
-        print("")
-        printIndexValue(intInput, idx)
+        if debug: print("")
+        if debug: printIndexValue(intInput, idx)
         #readOpCode(val)
         if val == 1:
-            print("add({}, {}, {})".format(intInput[idx+1], intInput[idx+2], intInput[idx+3]))
-            print("L[{}] = {} + {} = {}".format(intInput[idx+3], intInput[intInput[idx+1]], intInput[intInput[idx+2]], intInput[intInput[idx+1]] + intInput[intInput[idx+2]]))
+            if debug: print("add({}, {}, {})".format(intInput[idx+1], intInput[idx+2], intInput[idx+3]))
+            if debug: print("L[{}] = {} + {} = {}".format(intInput[idx+3], intInput[intInput[idx+1]], intInput[intInput[idx+2]], intInput[intInput[idx+1]] + intInput[intInput[idx+2]]))
             intInput[intInput[idx+3]] = intInput[intInput[idx+1]] + intInput[intInput[idx+2]]
             ignore = 3
         elif val == 2:
-            print("mul({}, {}, {})".format(intInput[idx+1], intInput[idx+2], intInput[idx+3]))
-            print("L[{}] = {} * {} = {}".format(intInput[idx+3], intInput[intInput[idx+1]], intInput[intInput[idx+2]], intInput[intInput[idx+1]] * intInput[intInput[idx+2]]))
+            if debug: print("mul({}, {}, {})".format(intInput[idx+1], intInput[idx+2], intInput[idx+3]))
+            if debug: print("L[{}] = {} * {} = {}".format(intInput[idx+3], intInput[intInput[idx+1]], intInput[intInput[idx+2]], intInput[intInput[idx+1]] * intInput[intInput[idx+2]]))
             intInput[intInput[idx+3]] = intInput[intInput[idx+1]] * intInput[intInput[idx+2]]
             ignore = 3
         elif val == 99:
-            print("break")
+            if debug: print("break")
             return(intInput)
 
-if __name__ == '__main__':
+def runPartOne():
     intInput2 = [1,1,1,4,99,5,6,0,99]
     runIntcode(intInput2)
     intCode = loadintCode()
@@ -73,3 +73,20 @@ if __name__ == '__main__':
     runIntcode(intCode)
     print("result should be:")
     print([30,1,1,4,2,5,6,0,99])
+
+def runPartTwo():
+    for noun in range(100):
+        for verb in range(100):
+            print("noun: {:3d} verb: {:3d}".format(noun, verb), end='')
+            intCode = loadintCode()
+            intCode[1] = noun
+            intCode[2] = verb
+            result = runIntcode(intCode, False)
+            print("  {}".format(result[0]))
+            if result[0] == 19690720:
+                return 100*noun + verb
+
+
+
+if __name__ == '__main__':
+    runPartTwo()
