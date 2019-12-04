@@ -27,6 +27,16 @@ class TestRunner(unittest.TestCase):
         self.assertEqual(day4.Decreases("555554"), True)
         self.assertEqual(day4.Decreases("555555"), False)
 
+    def test_hasSpecialDouble(self):
+        self.assertEqual(day4.hasSpecialDouble("123456") , False)
+        self.assertEqual(day4.hasSpecialDouble("113456") , True)
+        self.assertEqual(day4.hasSpecialDouble("122456") , True)
+        self.assertEqual(day4.hasSpecialDouble("123356") , True)
+        self.assertEqual(day4.hasSpecialDouble("123446") , True)
+        self.assertEqual(day4.hasSpecialDouble("123466") , True)
+        self.assertEqual(day4.hasSpecialDouble("112233") , True)
+        self.assertEqual(day4.hasSpecialDouble("123444") , False)
+        self.assertEqual(day4.hasSpecialDouble("111122") , True)
 
 if __name__ == '__main__':
     unittest.main()

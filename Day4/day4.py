@@ -1,5 +1,7 @@
 # day4
 
+from collections import Counter
+
 def hasDouble(pw):
     for i in range(len(pw)-1):
         if pw[i] == pw[i+1]:
@@ -22,8 +24,13 @@ def isValidPassword(_pw):
         return False
     return True
 
-def hasSpecialDouble(pw):
-    return True
+def hasSpecialDouble(_pw):
+    grouped = Counter(str(_pw))
+    #print(grouped)
+    for v in grouped.values():
+        if v == 2:
+            return True
+    return False
 
 def runPartOne(minimum = 168630, maximum = 718098):
     pws = []
@@ -32,7 +39,7 @@ def runPartOne(minimum = 168630, maximum = 718098):
         if isValidPassword(i):
             pws.append(i)
     print()
-    print(pws)
+    #print(pws)
     print(len(pws))
 
 def runPartTwo(minimum = 168630, maximum = 718098):
@@ -42,7 +49,7 @@ def runPartTwo(minimum = 168630, maximum = 718098):
             if hasSpecialDouble(i):
                 pws.append(i)
     print()
-    print(pws)
+    #print(pws)
     print(len(pws))
 
 if __name__ == '__main__':
