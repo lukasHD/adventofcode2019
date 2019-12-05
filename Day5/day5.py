@@ -35,6 +35,36 @@ def printIndexValue(L, pos=0):
         print("{:^{width}s},".format(str(idx), width=longest+1),end='')
     print(")")
 
+def ADD(a, b):
+    return a+b
+
+def MUL(a, b):
+    return a*b
+
+def INP(sim=None):
+    if sim is not None: 
+        print("simulate input value: {}".format(sim))
+        return sim
+    else: 
+        sim = int(input(prompt='Enter Input'))
+        return sim
+
+def OUT(a):
+    print("Output is: {}".format(a))
+
+def END():
+    print("END")
+    return "END"
+
+instrSet = {
+    1: (ADD, 3),
+    2: (MUL, 3),
+    3: (INP, 1),
+    4: (OUT, 1),
+    99: (END, 0)
+}
+
+
 def runIntcode(intInput, debug=True):
     ignore = 0
     for idx, val in enumerate(intInput):
