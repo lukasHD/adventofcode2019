@@ -35,33 +35,39 @@ def printIndexValue(L, pos=0):
         print("{:^{width}s},".format(str(idx), width=longest+1),end='')
     print(")")
 
-def ADD(a, b):
+def ADD(vals):
+    if len(vals) != 2: raise TypeError
+    a,b = vals
     return a+b
 
-def MUL(a, b):
+def MUL(vals):
+    if len(vals) != 2: raise TypeError
+    a,b = vals
     return a*b
 
-def INP(sim=None):
+def INP(vals, sim=None):
     if sim is not None: 
         print("simulate input value: {}".format(sim))
         return sim
     else: 
-        sim = int(input(prompt='Enter Input'))
+        print("Enter input: ")
+        sim = int(input())
         return sim
 
-def OUT(a):
-    print("Output is: {}".format(a))
+def OUT(vals):
+    if len(vals) != 1: raise TypeError
+    print("Output is: {}".format(vals[0]))
 
 def END():
     print("END")
     return "END"
 
 instrSet = {
-    1: (ADD, 3),
-    2: (MUL, 3),
-    3: (INP, 1),
-    4: (OUT, 1),
-    99: (END, 0)
+    1: (ADD, 3, True),
+    2: (MUL, 3, True),
+    3: (INP, 1, True),
+    4: (OUT, 1, False),
+    99: (END, 0, False)
 }
 
 def decode(val):
@@ -79,26 +85,36 @@ def runCode(intInput, debug=True):
             continue
         if debug: printIndexValue(intInput, idx)
         cmd = val%100
-        op, numVar = decode(cmd)
+        op, numVar, writes = decode(cmd)
         if op == END:
             op()
-            break
+            return intInput
         modes = val//100
         mod= []
         while (modes > 0):
             tmp = modes%10
             if tmp not in [0, 1]: raise TypeError
-            mod.append()
+            mod.append(tmp)
             modes = modes//10
         # now run op(vars)
         vars = []
         for i in range(numVar):
-            if mod[i] == 0:
+            try:
+                m = mod[i]
+            except IndexError:
+                m = 0
+            if m == 0:
                 vars.append(intInput[intInput[idx+1+i]])
-            elif mod[i] == 1:
+            elif m == 1:
                 vars.append(intInput[idx+1+i])
             else: 
                 raise RuntimeError
+        if writes:
+            # an opcode that writes to last parameter
+            intInput[intInput[idx+numVar]] = op(vars[:-1])
+        else:
+            op(vars)
+        ignore = numVar
 
 def runIntcode(intInput, debug=True):
     ignore = 0
@@ -128,14 +144,14 @@ def runIntcode(intInput, debug=True):
 
 def runDay2PartOne():
     intInput2 = [1,1,1,4,99,5,6,0,99]
-    runIntcode(intInput2)
+    runCode(intInput2)
     intCode = loadintCode('input_day2')
     print(intCode)
     intCode[1] = 12
     intCode[2] = 2
     print(intCode)
     print("**************************************************")
-    runIntcode(intCode)
+    runCode(intCode)
     print("result should be:")
     print([30,1,1,4,2,5,6,0,99])
 
@@ -152,8 +168,10 @@ def runDay2PartTwo():
                 return 100*noun + verb
 
 def runPartOne():
-    intCode = loadintCode('input')
-    runCode(intCode)
+    runCode([1002,4,3,4,33])
+    runCode([3,0,4,0,99])
+    #intCode = loadintCode('input')
+    #runCode(intCode)
 
 if __name__ == '__main__':
     #runDay2PartOne()
