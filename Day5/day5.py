@@ -170,8 +170,8 @@ def runDay2PartTwo():
 def runPartOne():
     runCode([1002,4,3,4,33])
     runCode([3,0,4,0,99])
-    #intCode = loadintCode('input')
-    #runCode(intCode)
+    intCode = loadintCode('input')
+    runCode(intCode, debug=False)
 
 if __name__ == '__main__':
     #runDay2PartOne()
