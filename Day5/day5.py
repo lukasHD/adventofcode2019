@@ -64,6 +64,41 @@ instrSet = {
     99: (END, 0)
 }
 
+def decode(val):
+    if val in instrSet.keys():
+        # valid op code
+        return instrSet[val]
+    else:
+        return None
+
+def runCode(intInput, debug=True):
+    ignore = 0
+    for idx, val in enumerate(intInput):
+        if ignore > 0:
+            ignore -= 1
+            continue
+        if debug: printIndexValue(intInput, idx)
+        cmd = val%100
+        op, numVar = decode(cmd)
+        if op == END:
+            op()
+            break
+        modes = val//100
+        mod= []
+        while (modes > 0):
+            tmp = modes%10
+            if tmp not in [0, 1]: raise TypeError
+            mod.append()
+            modes = modes//10
+        # now run op(vars)
+        vars = []
+        for i in range(numVar):
+            if mod[i] == 0:
+                vars.append(intInput[intInput[idx+1+i]])
+            elif mod[i] == 1:
+                vars.append(intInput[idx+1+i])
+            else: 
+                raise RuntimeError
 
 def runIntcode(intInput, debug=True):
     ignore = 0
@@ -116,8 +151,11 @@ def runDay2PartTwo():
             if result[0] == 19690720:
                 return 100*noun + verb
 
-
+def runPartOne():
+    intCode = loadintCode('input')
+    runCode(intCode)
 
 if __name__ == '__main__':
-    runDay2PartOne()
-    runDay2PartTwo()
+    #runDay2PartOne()
+    #runDay2PartTwo()
+    runPartOne()
