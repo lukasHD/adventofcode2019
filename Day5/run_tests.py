@@ -214,6 +214,72 @@ class TestRunner(unittest.TestCase):
         matches = re.findall(regex, mock_stdout.getvalue(), re.MULTILINE)
         self.assertEqual(matches[-1], expected)
 
+    @patch('sys.stdout', new_callable=io.StringIO)
+    @patch.object(day5, "input", create=True)
+    def test_jmp_1(self, input, mock_stdout):
+        input.return_value = input_data = "0"
+        expected = "0"
+
+        actual = day5.runCode([3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9])
+        regex = r"Output is: (-*\d+)"
+        matches = re.findall(regex, mock_stdout.getvalue(), re.MULTILINE)
+        self.assertEqual(matches[-1], expected)
+
+    @patch('sys.stdout', new_callable=io.StringIO)
+    @patch.object(day5, "input", create=True)
+    def test_jmp_2(self, input, mock_stdout):
+        input.return_value = input_data = "-100"
+        expected = "1"
+
+        actual = day5.runCode([3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9])
+        regex = r"Output is: (-*\d+)"
+        matches = re.findall(regex, mock_stdout.getvalue(), re.MULTILINE)
+        self.assertEqual(matches[-1], expected)
+
+    @patch('sys.stdout', new_callable=io.StringIO)
+    @patch.object(day5, "input", create=True)
+    def test_jmp_3(self, input, mock_stdout):
+        input.return_value = input_data = "123"
+        expected = "1"
+
+        actual = day5.runCode([3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9])
+        regex = r"Output is: (-*\d+)"
+        matches = re.findall(regex, mock_stdout.getvalue(), re.MULTILINE)
+        self.assertEqual(matches[-1], expected)
+
+    # immediate mode
+    @patch('sys.stdout', new_callable=io.StringIO)
+    @patch.object(day5, "input", create=True)
+    def test_jmp_4(self, input, mock_stdout):
+        input.return_value = input_data = "0"
+        expected = "0"
+
+        actual = day5.runCode([3,3,1105,-1,9,1101,0,0,12,4,12,99,1])
+        regex = r"Output is: (-*\d+)"
+        matches = re.findall(regex, mock_stdout.getvalue(), re.MULTILINE)
+        self.assertEqual(matches[-1], expected)
+
+    @patch('sys.stdout', new_callable=io.StringIO)
+    @patch.object(day5, "input", create=True)
+    def test_jmp_5(self, input, mock_stdout):
+        input.return_value = input_data = "-100"
+        expected = "1"
+
+        actual = day5.runCode([3,3,1105,-1,9,1101,0,0,12,4,12,99,1])
+        regex = r"Output is: (-*\d+)"
+        matches = re.findall(regex, mock_stdout.getvalue(), re.MULTILINE)
+        self.assertEqual(matches[-1], expected)
+
+    @patch('sys.stdout', new_callable=io.StringIO)
+    @patch.object(day5, "input", create=True)
+    def test_jmp_6(self, input, mock_stdout):
+        input.return_value = input_data = "123"
+        expected = "1"
+
+        actual = day5.runCode([3,3,1105,-1,9,1101,0,0,12,4,12,99,1])
+        regex = r"Output is: (-*\d+)"
+        matches = re.findall(regex, mock_stdout.getvalue(), re.MULTILINE)
+        self.assertEqual(matches[-1], expected)
 
 if __name__ == '__main__':
     unittest.main()
