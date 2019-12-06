@@ -51,9 +51,8 @@ class TestRunner(unittest.TestCase):
     @patch.object(day5, "input", create=True)
     def test_inp_1(self, input, mock_stdout):
         input.return_value = input_data = "123"
-        expected = int(input_data)
 
-        actual = day5.runCode([3,0,4,0,99])
+        day5.runCode([3,0,4,0,99])
 
         #print(mock_stdout.getvalue())
         regex = r"Output is: (\d+)"
@@ -61,7 +60,7 @@ class TestRunner(unittest.TestCase):
 
         self.assertEqual(matches[-1], input_data)
 
-    def getLastOutput(string, nothing):
+    def getLastOutput(self, string, nothing):
         regex = r"Output is: (\d+)"
         matches = re.findall(regex, string, re.MULTILINE)
         return matches[-1]
@@ -70,9 +69,8 @@ class TestRunner(unittest.TestCase):
     @patch.object(day5, "input", create=True)
     def test_inp_2(self, input, mock_stdout):
         input.return_value = input_data = "-456"
-        expected = int(input_data)
-
-        actual = day5.runCode([3,0,4,0,99])
+        
+        day5.runCode([3,0,4,0,99])
 
         regex = r"Output is: (-*\d+)"
         matches = re.findall(regex, mock_stdout.getvalue(), re.MULTILINE)
@@ -82,10 +80,10 @@ class TestRunner(unittest.TestCase):
     @patch('sys.stdout', new_callable=io.StringIO)
     @patch.object(day5, "input", create=True)
     def test_eql_1(self, input, mock_stdout):
-        input.return_value = input_data = "8"
+        input.return_value = "8"
         expected = "1"
 
-        actual = day5.runCode([3,9,8,9,10,9,4,9,99,-1,8])
+        day5.runCode([3,9,8,9,10,9,4,9,99,-1,8])
         regex = r"Output is: (-*\d+)"
         matches = re.findall(regex, mock_stdout.getvalue(), re.MULTILINE)
         self.assertEqual(matches[-1], expected)
@@ -93,10 +91,10 @@ class TestRunner(unittest.TestCase):
     @patch('sys.stdout', new_callable=io.StringIO)
     @patch.object(day5, "input", create=True)
     def test_eql_2(self, input, mock_stdout):
-        input.return_value = input_data = "7"
+        input.return_value = "7"
         expected = "0"
 
-        actual = day5.runCode([3,9,8,9,10,9,4,9,99,-1,8])
+        day5.runCode([3,9,8,9,10,9,4,9,99,-1,8])
         regex = r"Output is: (-*\d+)"
         matches = re.findall(regex, mock_stdout.getvalue(), re.MULTILINE)
         self.assertEqual(matches[-1], expected)
@@ -104,10 +102,10 @@ class TestRunner(unittest.TestCase):
     @patch('sys.stdout', new_callable=io.StringIO)
     @patch.object(day5, "input", create=True)
     def test_eql_3(self, input, mock_stdout):
-        input.return_value = input_data = "-9"
+        input.return_value = "-9"
         expected = "0"
 
-        actual = day5.runCode([3,9,8,9,10,9,4,9,99,-1,8])
+        day5.runCode([3,9,8,9,10,9,4,9,99,-1,8])
         regex = r"Output is: (-*\d+)"
         matches = re.findall(regex, mock_stdout.getvalue(), re.MULTILINE)
         self.assertEqual(matches[-1], expected)
@@ -116,10 +114,10 @@ class TestRunner(unittest.TestCase):
     @patch('sys.stdout', new_callable=io.StringIO)
     @patch.object(day5, "input", create=True)
     def test_eql_4(self, input, mock_stdout):
-        input.return_value = input_data = "8"
+        input.return_value = "8"
         expected = "1"
 
-        actual = day5.runCode([3,3,1108,-1,8,3,4,3,99])
+        day5.runCode([3,3,1108,-1,8,3,4,3,99])
         regex = r"Output is: (-*\d+)"
         matches = re.findall(regex, mock_stdout.getvalue(), re.MULTILINE)
         self.assertEqual(matches[-1], expected)
@@ -127,10 +125,10 @@ class TestRunner(unittest.TestCase):
     @patch('sys.stdout', new_callable=io.StringIO)
     @patch.object(day5, "input", create=True)
     def test_eql_5(self, input, mock_stdout):
-        input.return_value = input_data = "7"
+        input.return_value = "7"
         expected = "0"
 
-        actual = day5.runCode([3,3,1108,-1,8,3,4,3,99])
+        day5.runCode([3,3,1108,-1,8,3,4,3,99])
         regex = r"Output is: (-*\d+)"
         matches = re.findall(regex, mock_stdout.getvalue(), re.MULTILINE)
         self.assertEqual(matches[-1], expected)
@@ -138,10 +136,10 @@ class TestRunner(unittest.TestCase):
     @patch('sys.stdout', new_callable=io.StringIO)
     @patch.object(day5, "input", create=True)
     def test_eql_6(self, input, mock_stdout):
-        input.return_value = input_data = "-9"
+        input.return_value = "-9"
         expected = "0"
 
-        actual = day5.runCode([3,3,1108,-1,8,3,4,3,99])
+        day5.runCode([3,3,1108,-1,8,3,4,3,99])
         regex = r"Output is: (-*\d+)"
         matches = re.findall(regex, mock_stdout.getvalue(), re.MULTILINE)
         self.assertEqual(matches[-1], expected)
@@ -150,10 +148,10 @@ class TestRunner(unittest.TestCase):
     @patch('sys.stdout', new_callable=io.StringIO)
     @patch.object(day5, "input", create=True)
     def test_les_1(self, input, mock_stdout):
-        input.return_value = input_data = "7"
+        input.return_value = "7"
         expected = "1"
 
-        actual = day5.runCode([3,9,7,9,10,9,4,9,99,-1,8])
+        day5.runCode([3,9,7,9,10,9,4,9,99,-1,8])
         regex = r"Output is: (-*\d+)"
         matches = re.findall(regex, mock_stdout.getvalue(), re.MULTILINE)
         self.assertEqual(matches[-1], expected)
@@ -161,10 +159,10 @@ class TestRunner(unittest.TestCase):
     @patch('sys.stdout', new_callable=io.StringIO)
     @patch.object(day5, "input", create=True)
     def test_les_2(self, input, mock_stdout):
-        input.return_value = input_data = "8"
+        input.return_value = "8"
         expected = "0"
 
-        actual = day5.runCode([3,9,7,9,10,9,4,9,99,-1,8])
+        day5.runCode([3,9,7,9,10,9,4,9,99,-1,8])
         regex = r"Output is: (-*\d+)"
         matches = re.findall(regex, mock_stdout.getvalue(), re.MULTILINE)
         self.assertEqual(matches[-1], expected)
@@ -172,10 +170,10 @@ class TestRunner(unittest.TestCase):
     @patch('sys.stdout', new_callable=io.StringIO)
     @patch.object(day5, "input", create=True)
     def test_les_3(self, input, mock_stdout):
-        input.return_value = input_data = "9"
+        input.return_value = "9"
         expected = "0"
 
-        actual = day5.runCode([3,9,7,9,10,9,4,9,99,-1,8])
+        day5.runCode([3,9,7,9,10,9,4,9,99,-1,8])
         regex = r"Output is: (-*\d+)"
         matches = re.findall(regex, mock_stdout.getvalue(), re.MULTILINE)
         self.assertEqual(matches[-1], expected)
@@ -184,10 +182,10 @@ class TestRunner(unittest.TestCase):
     @patch('sys.stdout', new_callable=io.StringIO)
     @patch.object(day5, "input", create=True)
     def test_les_4(self, input, mock_stdout):
-        input.return_value = input_data = "7"
+        input.return_value =  "7"
         expected = "1"
 
-        actual = day5.runCode([3,3,1107,-1,8,3,4,3,99])
+        day5.runCode([3,3,1107,-1,8,3,4,3,99])
         regex = r"Output is: (-*\d+)"
         matches = re.findall(regex, mock_stdout.getvalue(), re.MULTILINE)
         self.assertEqual(matches[-1], expected)
@@ -195,10 +193,10 @@ class TestRunner(unittest.TestCase):
     @patch('sys.stdout', new_callable=io.StringIO)
     @patch.object(day5, "input", create=True)
     def test_les_5(self, input, mock_stdout):
-        input.return_value = input_data = "8"
+        input.return_value = "8"
         expected = "0"
 
-        actual = day5.runCode([3,3,1107,-1,8,3,4,3,99])
+        day5.runCode([3,3,1107,-1,8,3,4,3,99])
         regex = r"Output is: (-*\d+)"
         matches = re.findall(regex, mock_stdout.getvalue(), re.MULTILINE)
         self.assertEqual(matches[-1], expected)
@@ -206,10 +204,10 @@ class TestRunner(unittest.TestCase):
     @patch('sys.stdout', new_callable=io.StringIO)
     @patch.object(day5, "input", create=True)
     def test_les_6(self, input, mock_stdout):
-        input.return_value = input_data = "9"
+        input.return_value = "9"
         expected = "0"
 
-        actual = day5.runCode([3,3,1107,-1,8,3,4,3,99])
+        day5.runCode([3,3,1107,-1,8,3,4,3,99])
         regex = r"Output is: (-*\d+)"
         matches = re.findall(regex, mock_stdout.getvalue(), re.MULTILINE)
         self.assertEqual(matches[-1], expected)
@@ -217,10 +215,10 @@ class TestRunner(unittest.TestCase):
     @patch('sys.stdout', new_callable=io.StringIO)
     @patch.object(day5, "input", create=True)
     def test_jmp_1(self, input, mock_stdout):
-        input.return_value = input_data = "0"
+        input.return_value = "0"
         expected = "0"
 
-        actual = day5.runCode([3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9])
+        day5.runCode([3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9])
         regex = r"Output is: (-*\d+)"
         matches = re.findall(regex, mock_stdout.getvalue(), re.MULTILINE)
         self.assertEqual(matches[-1], expected)
@@ -228,10 +226,10 @@ class TestRunner(unittest.TestCase):
     @patch('sys.stdout', new_callable=io.StringIO)
     @patch.object(day5, "input", create=True)
     def test_jmp_2(self, input, mock_stdout):
-        input.return_value = input_data = "-100"
+        input.return_value = "-100"
         expected = "1"
 
-        actual = day5.runCode([3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9])
+        day5.runCode([3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9])
         regex = r"Output is: (-*\d+)"
         matches = re.findall(regex, mock_stdout.getvalue(), re.MULTILINE)
         self.assertEqual(matches[-1], expected)
@@ -239,10 +237,10 @@ class TestRunner(unittest.TestCase):
     @patch('sys.stdout', new_callable=io.StringIO)
     @patch.object(day5, "input", create=True)
     def test_jmp_3(self, input, mock_stdout):
-        input.return_value = input_data = "123"
+        input.return_value = "123"
         expected = "1"
 
-        actual = day5.runCode([3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9])
+        day5.runCode([3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9])
         regex = r"Output is: (-*\d+)"
         matches = re.findall(regex, mock_stdout.getvalue(), re.MULTILINE)
         self.assertEqual(matches[-1], expected)
@@ -251,10 +249,10 @@ class TestRunner(unittest.TestCase):
     @patch('sys.stdout', new_callable=io.StringIO)
     @patch.object(day5, "input", create=True)
     def test_jmp_4(self, input, mock_stdout):
-        input.return_value = input_data = "0"
+        input.return_value = "0"
         expected = "0"
 
-        actual = day5.runCode([3,3,1105,-1,9,1101,0,0,12,4,12,99,1])
+        day5.runCode([3,3,1105,-1,9,1101,0,0,12,4,12,99,1])
         regex = r"Output is: (-*\d+)"
         matches = re.findall(regex, mock_stdout.getvalue(), re.MULTILINE)
         self.assertEqual(matches[-1], expected)
@@ -262,10 +260,10 @@ class TestRunner(unittest.TestCase):
     @patch('sys.stdout', new_callable=io.StringIO)
     @patch.object(day5, "input", create=True)
     def test_jmp_5(self, input, mock_stdout):
-        input.return_value = input_data = "-100"
+        input.return_value = "-100"
         expected = "1"
 
-        actual = day5.runCode([3,3,1105,-1,9,1101,0,0,12,4,12,99,1])
+        day5.runCode([3,3,1105,-1,9,1101,0,0,12,4,12,99,1])
         regex = r"Output is: (-*\d+)"
         matches = re.findall(regex, mock_stdout.getvalue(), re.MULTILINE)
         self.assertEqual(matches[-1], expected)
@@ -273,10 +271,10 @@ class TestRunner(unittest.TestCase):
     @patch('sys.stdout', new_callable=io.StringIO)
     @patch.object(day5, "input", create=True)
     def test_jmp_6(self, input, mock_stdout):
-        input.return_value = input_data = "123"
+        input.return_value = "123"
         expected = "1"
 
-        actual = day5.runCode([3,3,1105,-1,9,1101,0,0,12,4,12,99,1])
+        day5.runCode([3,3,1105,-1,9,1101,0,0,12,4,12,99,1])
         regex = r"Output is: (-*\d+)"
         matches = re.findall(regex, mock_stdout.getvalue(), re.MULTILINE)
         self.assertEqual(matches[-1], expected)
@@ -285,10 +283,10 @@ class TestRunner(unittest.TestCase):
     @patch('sys.stdout', new_callable=io.StringIO)
     @patch.object(day5, "input", create=True)
     def test_run_1(self, input, mock_stdout):
-        input.return_value = input_data = "7"
+        input.return_value = "7"
         expected = "999"
 
-        actual = day5.runCode([3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99])
+        day5.runCode([3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99])
         regex = r"Output is: (-*\d+)"
         matches = re.findall(regex, mock_stdout.getvalue(), re.MULTILINE)
         self.assertEqual(matches[-1], expected)
@@ -296,10 +294,10 @@ class TestRunner(unittest.TestCase):
     @patch('sys.stdout', new_callable=io.StringIO)
     @patch.object(day5, "input", create=True)
     def test_run_2(self, input, mock_stdout):
-        input.return_value = input_data = "8"
+        input.return_value = "8"
         expected = "1000"
 
-        actual = day5.runCode([3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99])
+        day5.runCode([3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99])
         regex = r"Output is: (-*\d+)"
         matches = re.findall(regex, mock_stdout.getvalue(), re.MULTILINE)
         self.assertEqual(matches[-1], expected)
@@ -307,10 +305,10 @@ class TestRunner(unittest.TestCase):
     @patch('sys.stdout', new_callable=io.StringIO)
     @patch.object(day5, "input", create=True)
     def test_run_3(self, input, mock_stdout):
-        input.return_value = input_data = "9"
+        input.return_value = "9"
         expected = "1001"
 
-        actual = day5.runCode([3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99])
+        day5.runCode([3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99])
         regex = r"Output is: (-*\d+)"
         matches = re.findall(regex, mock_stdout.getvalue(), re.MULTILINE)
         self.assertEqual(matches[-1], expected)
