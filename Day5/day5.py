@@ -97,9 +97,13 @@ def decode(val):
 
 def runCode(intInput, debug=False):
     ignore = 0
-    for idx, val in enumerate(intInput):
+    idx = 0
+    #for idx, val in enumerate(intInput):
+    while(idx <= len(intInput)):
+        val = intInput[idx]
         if ignore > 0:
             ignore -= 1
+            idx += 1
             continue
         if debug: printIndexValue(intInput, idx)
         cmd = val%100
@@ -132,9 +136,13 @@ def runCode(intInput, debug=False):
             intInput[intInput[idx+numVar]] = op(vars[:-1])
         elif jumps:
             print("JUMP")
+            if op(vars[:-1]):
+                idx = vars[-1]
+                continue
         else:
             op(vars)
         ignore = numVar
+        idx += 1
 
 def runIntcode(intInput, debug=False):
     ignore = 0
