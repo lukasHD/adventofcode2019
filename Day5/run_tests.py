@@ -1,5 +1,9 @@
 import day5
 import unittest
+import io
+import re
+
+from unittest.mock import patch
 
 # run tests like this `python -m unittest day1.py -v`
 
@@ -41,6 +45,46 @@ class TestRunner(unittest.TestCase):
 
     def test_day5_1_7(self):
         self.assertEqual(day5.runCode([1101,100,-1,4,0]), [1101,100,-1,4,99])
+
+    #def setUp(self):
+    #    # input is untouched before test
+    #    assert day5.input is builtins.input
+
+    #def test_day5_1_mockInput(self):
+    #    day5.runCode([3,0,4,0,99])
+    #    self.assertEqual(1,1)
+
+    #def test_using_with(self):
+    #    input_data = "123"
+    #    expected = int(input_data)
+
+    #    with patch.object(day5, "input", create=True, 
+    #            return_value=expected):
+    #        # create=True is needed as input is not in the globals of 
+    #        # day5, but actually found in builtins .
+    #        actual = day5.runCode([3,0,4,0,99])
+
+    #    self.assertEqual(expected, actual)
+
+    @patch('sys.stdout', new_callable=io.StringIO)
+    @patch.object(day5, "input", create=True)
+    def test_using_decorator(self, input, mock_stdout):
+        input.return_value = input_data = "123"
+        expected = int(input_data)
+
+        actual = day5.runCode([3,0,4,0,99])
+
+        #print(mock_stdout.getvalue())
+        regex = r"Output is: (\d+)"
+        matches = re.findall(regex, mock_stdout.getvalue(), re.MULTILINE)
+
+        self.assertEqual(matches[-1], input_data)
+
+
+    #def tearDown(self):
+    #    # raw input is restored aftest
+    #    assert day5.input is builtins.input
+
 
 
 if __name__ == '__main__':

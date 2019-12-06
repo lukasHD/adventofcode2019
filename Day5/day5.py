@@ -5,17 +5,6 @@
 # --- Day 5: Sunny with a Chance of Asteroids ---
 # 
 
-def readOpCode(op):
-    if op == 1:
-        print("add")
-        return 
-    elif op == 2:
-        print("mul")
-    elif op == 99:
-        print("break")
-
-intInput = [1,9,10,3,2,3,11,0,99,30,40,50]
-
 def loadintCode(fname='input'):
     with open(fname, 'r') as f:
         l = list(f.read().split(','))
@@ -58,16 +47,45 @@ def OUT(vals):
     if len(vals) != 1: raise TypeError
     print("Output is: {}".format(vals[0]))
 
+def JPT(vals):
+    if vals[0] != 0: 
+        return True
+    else:
+        return False
+
+def JPF(vals):
+    if vals[0] == 0:
+        return True
+    else: 
+        return False
+
+def LES(vals):
+    if vals[0] < vals[1]:
+        return 1
+    else:
+        return 0
+
+def EQL(vals):
+    if vals[0] == vals[1]:
+        return 1
+    else:
+        return 0
+
 def END():
-    print("END")
+    #print("END")
     return "END"
 
 instrSet = {
-    1: (ADD, 3, True),
-    2: (MUL, 3, True),
-    3: (INP, 1, True),
-    4: (OUT, 1, False),
-    99: (END, 0, False)
+    # code: (FUNCTION, #ofParams, Outputs, jumps)
+    1: (ADD, 3, True, False),
+    2: (MUL, 3, True, False),
+    3: (INP, 1, True, False),
+    4: (OUT, 1, False, False),
+    5: (JPT, 2, False, True),
+    6: (JPF, 2, False, True),
+    7: (LES, 3, True, False),
+    8: (EQL, 3, True, False),
+    99: (END, 0, False, True)
 }
 
 def decode(val):
@@ -77,7 +95,7 @@ def decode(val):
     else:
         return None
 
-def runCode(intInput, debug=True):
+def runCode(intInput, debug=False):
     ignore = 0
     for idx, val in enumerate(intInput):
         if ignore > 0:
@@ -85,7 +103,7 @@ def runCode(intInput, debug=True):
             continue
         if debug: printIndexValue(intInput, idx)
         cmd = val%100
-        op, numVar, writes = decode(cmd)
+        op, numVar, writes, jumps = decode(cmd)
         if op == END:
             op()
             return intInput
@@ -116,7 +134,7 @@ def runCode(intInput, debug=True):
             op(vars)
         ignore = numVar
 
-def runIntcode(intInput, debug=True):
+def runIntcode(intInput, debug=False):
     ignore = 0
     for idx, val in enumerate(intInput):
         if ignore > 0:
@@ -168,7 +186,7 @@ def runDay2PartTwo():
                 return 100*noun + verb
 
 def runPartOne():
-    runCode([1002,4,3,4,33])
+    print(runCode([1002,4,3,4,33]))
     runCode([3,0,4,0,99])
     intCode = loadintCode('input')
     runCode(intCode, debug=False)
