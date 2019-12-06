@@ -130,6 +130,8 @@ def runCode(intInput, debug=False):
         if writes:
             # an opcode that writes to last parameter
             intInput[intInput[idx+numVar]] = op(vars[:-1])
+        elif jumps:
+            print("JUMP")
         else:
             op(vars)
         ignore = numVar
