@@ -281,5 +281,39 @@ class TestRunner(unittest.TestCase):
         matches = re.findall(regex, mock_stdout.getvalue(), re.MULTILINE)
         self.assertEqual(matches[-1], expected)
 
+    # test complex
+    @patch('sys.stdout', new_callable=io.StringIO)
+    @patch.object(day5, "input", create=True)
+    def test_run_1(self, input, mock_stdout):
+        input.return_value = input_data = "7"
+        expected = "999"
+
+        actual = day5.runCode([3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99])
+        regex = r"Output is: (-*\d+)"
+        matches = re.findall(regex, mock_stdout.getvalue(), re.MULTILINE)
+        self.assertEqual(matches[-1], expected)
+
+    @patch('sys.stdout', new_callable=io.StringIO)
+    @patch.object(day5, "input", create=True)
+    def test_run_2(self, input, mock_stdout):
+        input.return_value = input_data = "8"
+        expected = "1000"
+
+        actual = day5.runCode([3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99])
+        regex = r"Output is: (-*\d+)"
+        matches = re.findall(regex, mock_stdout.getvalue(), re.MULTILINE)
+        self.assertEqual(matches[-1], expected)
+
+    @patch('sys.stdout', new_callable=io.StringIO)
+    @patch.object(day5, "input", create=True)
+    def test_run_3(self, input, mock_stdout):
+        input.return_value = input_data = "9"
+        expected = "1001"
+
+        actual = day5.runCode([3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99])
+        regex = r"Output is: (-*\d+)"
+        matches = re.findall(regex, mock_stdout.getvalue(), re.MULTILINE)
+        self.assertEqual(matches[-1], expected)
+
 if __name__ == '__main__':
     unittest.main()
