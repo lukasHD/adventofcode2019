@@ -18,7 +18,10 @@ class TestRunner(unittest.TestCase):
     
 
     def test_day6_1_1(self):
-        self.assertEqual(day6.getTotalOrbits(test), 42)
+        self.assertEqual(day6.getTotalOrbits("test_input"), 42)
+    
+    def test_day6_2_1(self):
+        self.assertEqual(day6.getNumberOfTransfers("test_input_2"), 4)
 
 
 if __name__ == '__main__':
