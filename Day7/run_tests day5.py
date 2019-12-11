@@ -5,9 +5,6 @@ import re
 
 from unittest.mock import patch
 
-# run tests like this `python -m unittest day1.py -v`
-
-
 class TestRunner(unittest.TestCase):
     
     def test_day2_1_1(self):
