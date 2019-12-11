@@ -27,25 +27,25 @@ class TestRunner(unittest.TestCase):
     def test_day2_1_5(self):
         self.assertEqual(day7.runCode([1,1,1,4,99,5,6,0,99]), [30,1,1,4,2,5,6,0,99])
 
-    def test_day7_1_1(self):
+    def test_day5_1_1(self):
         self.assertEqual(day7.runCode([1,9,10,3,2,3,11,0,99,30,40,50]), [3500,9,10,70,2,3,11,0,99,30,40,50])
 
-    def test_day7_1_2(self):
+    def test_day5_1_2(self):
         self.assertEqual(day7.runCode([1,0,0,0,99]), [2,0,0,0,99])
     
-    def test_day7_1_3(self):
+    def test_day5_1_3(self):
         self.assertEqual(day7.runCode([2,3,0,3,99]), [2,3,0,6,99])
 
-    def test_day7_1_4(self):
+    def test_day5_1_4(self):
         self.assertEqual(day7.runCode([2,4,4,5,99,0]), [2,4,4,5,99,9801])
 
-    def test_day7_1_5(self):
+    def test_day5_1_5(self):
         self.assertEqual(day7.runCode([1,1,1,4,99,5,6,0,99]), [30,1,1,4,2,5,6,0,99])
 
-    def test_day7_1_6(self):
+    def test_day5_1_6(self):
         self.assertEqual(day7.runCode([1002,4,3,4,33]), [1002,4,3,4,99])
 
-    def test_day7_1_7(self):
+    def test_day5_1_7(self):
         self.assertEqual(day7.runCode([1101,100,-1,4,0]), [1101,100,-1,4,99])
 
 
@@ -315,17 +315,17 @@ class TestRunner(unittest.TestCase):
         matches = re.findall(regex, mock_stdout.getvalue(), re.MULTILINE)
         self.assertEqual(matches[-1], expected)
 
-    def test_day7_1_1(self):
+    def test_z_day7_1_1(self):
         maxThrust, phaseSeq = day7.optimize(progA)
         self.assertEqual(maxThrust, 43210)
         self.assertEqual(phaseSeq, [4,3,2,1,0])
     
-    def test_day7_1_2(self):
+    def test_z_day7_1_2(self):
         maxThrust, phaseSeq = day7.optimize(progB)
         self.assertEqual(maxThrust, 54321)
         self.assertEqual(phaseSeq, [0,1,2,3,4])
     
-    def test_day7_1_3(self):
+    def test_z_day7_1_3(self):
         maxThrust, phaseSeq = day7.optimize(progC)
         self.assertEqual(maxThrust, 65210)
         self.assertEqual(phaseSeq, [1,0,4,3,2])
