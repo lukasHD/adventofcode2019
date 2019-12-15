@@ -326,23 +326,48 @@ class TestRunner(unittest.TestCase):
         maxThrust, phaseSeq = day7.optimize(progB)
         self.assertEqual(maxThrust, 54321)
         self.assertEqual(phaseSeq, [0,1,2,3,4])
-    
+
     def test_z_day7_1_3(self):
         maxThrust, phaseSeq = day7.optimize(progC)
         self.assertEqual(maxThrust, 65210)
         self.assertEqual(phaseSeq, [1,0,4,3,2])
+
+    def test_zz_run_1(self):
+        _in = 7
+        _exp = 999
+        _prog = [3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99]
+        amp = day7.Amp(_prog)
+        amp.inp.put(_in)
+        _out = amp.run(debug=False)[-1]
+        self.assertEqual(_out, _exp)
     
-    def test_z_day7_2_1(self):
+    def test_zz_run_2(self):
+        _in = 8
+        _exp = 1000
+        _prog = [3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99]
+        amp = day7.Amp(_prog)
+        amp.inp.put(_in)
+        _out = amp.run(debug=False)[-1]
+        self.assertEqual(_out, _exp)
+
+    def test_zz_run_3(self):
+        _in = 9
+        _exp = 1001
+        _prog = [3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99]
+        amp = day7.Amp(_prog)
+        amp.inp.put(_in)
+        _out = amp.run(debug=False)[-1]
+        self.assertEqual(_out, _exp)
+    
+    def test_zzz_day7_2_1(self):
         maxThrust, phaseSeq = day7.optimize2(progD)
         self.assertEqual(maxThrust, 139629729)
         self.assertEqual(phaseSeq, [9,8,7,6,5])
 
-    def test_z_day7_2_1(self):
+    def test_zzz_day7_2_2(self):
         maxThrust, phaseSeq = day7.optimize2(progE)
         self.assertEqual(maxThrust, 18216)
         self.assertEqual(phaseSeq, [9,7,8,5,6])
-    # def test_day6_2_1(self):
-    #     self.assertEqual(day6.getNumberOfTransfers("test_input_2"), 4)
 
 
 if __name__ == '__main__':
