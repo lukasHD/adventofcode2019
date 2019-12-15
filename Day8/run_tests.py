@@ -1,7 +1,7 @@
 import day8
 import unittest
 
-
+testA = "123456789012"
 
 class TestRunner(unittest.TestCase):
     
