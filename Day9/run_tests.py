@@ -12,6 +12,7 @@ progD = [3,26,1001,26,-4,26,3,27,1002,27,2,27,1,27,26,27,4,27,1001,28,-1,28,1005
 progE = [3,52,1001,52,-5,52,3,53,1,52,56,54,1007,54,5,55,1005,55,26,1001,54,-5,54,1105,1,12,1,53,54,53,1008,54,0,55,1001,55,1,55,2,53,55,53,4,53,1001,56,-1,56,1005,56,6,99,0,0,0,0,10]
 
 
+
 class TestRunner(unittest.TestCase):
     
     def test_day2_1_1(self):
@@ -317,22 +318,22 @@ class TestRunner(unittest.TestCase):
         matches = re.findall(regex, mock_stdout.getvalue(), re.MULTILINE)
         self.assertEqual(matches[-1], expected)
 
-    def test_z_day7_1_1(self):
+    def test_day7_1_1(self):
         maxThrust, phaseSeq = day9.optimize(progA)
         self.assertEqual(maxThrust, 43210)
         self.assertEqual(phaseSeq, [4,3,2,1,0])
     
-    def test_z_day7_1_2(self):
+    def test_day7_1_2(self):
         maxThrust, phaseSeq = day9.optimize(progB)
         self.assertEqual(maxThrust, 54321)
         self.assertEqual(phaseSeq, [0,1,2,3,4])
 
-    def test_z_day7_1_3(self):
+    def test_day7_1_3(self):
         maxThrust, phaseSeq = day9.optimize(progC)
         self.assertEqual(maxThrust, 65210)
         self.assertEqual(phaseSeq, [1,0,4,3,2])
 
-    def test_zz_run_1(self):
+    def test_run_1_neu(self):
         _in = 7
         _exp = 999
         _prog = [3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99]
@@ -341,7 +342,7 @@ class TestRunner(unittest.TestCase):
         _out = amp.run(debug=False)[-1]
         self.assertEqual(_out, _exp)
     
-    def test_zz_run_2(self):
+    def test_run_2_neu(self):
         _in = 8
         _exp = 1000
         _prog = [3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99]
@@ -350,7 +351,7 @@ class TestRunner(unittest.TestCase):
         _out = amp.run(debug=False)[-1]
         self.assertEqual(_out, _exp)
 
-    def test_zz_run_3(self):
+    def test_run_3_neu(self):
         _in = 9
         _exp = 1001
         _prog = [3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99]
@@ -359,16 +360,63 @@ class TestRunner(unittest.TestCase):
         _out = amp.run(debug=False)[-1]
         self.assertEqual(_out, _exp)
     
-    def test_zzz_day7_2_1(self):
+    def test_day7_2_1(self):
         maxThrust, phaseSeq = day9.optimize2(progD)
         self.assertEqual(maxThrust, 139629729)
         self.assertEqual(phaseSeq, [9,8,7,6,5])
 
-    def test_zzz_day7_2_2(self):
+    def test_day7_2_2(self):
         maxThrust, phaseSeq = day9.optimize2(progE)
         self.assertEqual(maxThrust, 18216)
         self.assertEqual(phaseSeq, [9,7,8,5,6])
 
+    def test_zz_run_1(self):
+        _in = 7
+        _exp = 999
+        _prog = [3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99]
+        amp = day9.Boost(_prog)
+        amp.inp.put(_in)
+        _out = amp.run(debug=False)[-1]
+        self.assertEqual(_out, _exp)
+    
+    def test_zz_run_2(self):
+        _in = 8
+        _exp = 1000
+        _prog = [3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99]
+        amp = day9.Boost(_prog)
+        amp.inp.put(_in)
+        _out = amp.run(debug=False)[-1]
+        self.assertEqual(_out, _exp)
+
+    def test_zz_run_3(self):
+        _in = 9
+        _exp = 1001
+        _prog = [3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99]
+        amp = day9.Boost(_prog)
+        amp.inp.put(_in)
+        _out = amp.run(debug=False)[-1]
+        self.assertEqual(_out, _exp)
+
+    def test_zz_run_4(self):
+        _prog = [109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99]
+        amp = day9.Boost(_prog)
+        _out = amp.run(debug=False)
+        self.assertEqual(_out, _prog)
+
+    def test_zz_run_5(self):
+        _prog = [1102,34915192,34915192,7,4,7,99,0]
+        amp = day9.Boost(_prog)
+        _out = amp.run(debug=False)[-1]
+        self.assertEqual(len(str(_out)), 16)
+
+    def test_zz_run_6(self):
+        #_in = 9
+        _exp = 1125899906842624
+        _prog = [104,1125899906842624,99]
+        amp = day9.Boost(_prog)
+        #amp.inp.put(_in)
+        _out = amp.run(debug=False)[-1]
+        self.assertEqual(_out, _exp)
 
 if __name__ == '__main__':
     unittest.main()

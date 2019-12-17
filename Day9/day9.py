@@ -10,6 +10,7 @@
 import itertools
 from unittest.mock import patch
 import queue
+from collections import defaultdict
 
 def loadintCode(fname='input'):
     with open(fname, 'r') as f:
@@ -56,7 +57,6 @@ def OUT(vals, interactive=True):
     else:
         print("Output is: {}".format(vals[0]))
 
-
 def JPT(vals):
     if vals[0] != 0: 
         return True
@@ -81,20 +81,24 @@ def EQL(vals):
     else:
         return 0
 
+def ADJ(vals):
+    return vals[0]
+
 def END():
     #print("END")
     return "END"
 
 instrSet = {
     # code: (FUNCTION, #ofParams, Outputs, jumps)
-    1: (ADD, 3, True, False),
-    2: (MUL, 3, True, False),
-    3: (INP, 1, True, False),
-    4: (OUT, 1, False, False),
-    5: (JPT, 2, False, True),
-    6: (JPF, 2, False, True),
-    7: (LES, 3, True, False),
-    8: (EQL, 3, True, False),
+    1:  (ADD, 3, True,  False),
+    2:  (MUL, 3, True,  False),
+    3:  (INP, 1, True,  False),
+    4:  (OUT, 1, False, False),
+    5:  (JPT, 2, False, True),
+    6:  (JPF, 2, False, True),
+    7:  (LES, 3, True,  False),
+    8:  (EQL, 3, True,  False),
+    9:  (ADJ, 1, False, False),
     99: (END, 0, False, True)
 }
 
@@ -323,6 +327,93 @@ def optimize2(prog):
     return maxThrust, list(phaseSeq) 
         
 
+class Boost():
+    def __init__(self, _prog):
+        self.prog = defaultdict(int)
+    
+        for i in range(len(_prog)):
+            self.prog[i] = int(_prog[i])
+        self.inp           = queue.Queue()
+        self.output        = 0
+        self.input_counter = 0
+        self.halted        = False
+        self.finisehd      = False
+        self.idx           = 0
+        self.base          = 0
+
+    def run(self, debug=False, interactive=False):
+        ignore = 0
+        output = []
+        while not self.finisehd:
+            val = self.prog[self.idx]
+            if ignore > 0:
+                ignore -= 1
+                self.idx += 1
+                continue
+            #if debug: printIndexValue(self.prog, self.idx)
+            cmd = val%100
+            op, numVar, writes, jumps = decode(cmd)
+            if op == END:
+                op()
+                #print("END END END")
+                if debug: print(output)
+                self.finisehd = True
+                if interactive == True:
+                    return self.prog
+                else:
+                    if debug: print(output)
+                    return output
+            modes = val//100
+            mod= []
+            while (modes > 0):
+                tmp = modes%10
+                if tmp not in [0, 1, 2]: raise TypeError
+                mod.append(tmp)
+                modes = modes//10
+            vars = []
+            for i in range(numVar):
+                try:
+                    m = mod[i]
+                except IndexError:
+                    m = 0
+                if m == 0:
+                    vars.append(self.prog[self.prog[self.idx+1+i]])
+                elif m == 1:
+                    vars.append(self.prog[self.idx+1+i])
+                elif m == 2:
+                    vars.append(self.prog[self.base + self.prog[self.idx+1+i]])
+                else: 
+                    raise RuntimeError
+            if op == ADJ:
+                # adjust the base by the value of the parameter 
+                self.base = self.base + vars[0]
+            elif writes:
+                # an opcode that writes to last parameter
+                if op == INP and interactive == False:
+                    if self.inp.empty():
+                        #print("empty")
+                        return output
+                    self.prog[self.prog[self.idx+numVar]] = op(vars[:-1], interactive=False, value=self.inp.get(block=False))
+                else:
+                    self.prog[self.prog[self.idx+numVar]] = op(vars[:-1])
+            elif jumps:
+                #print("JUMP")
+                if op(vars[:-1]):
+                    self.idx = vars[-1]
+                    continue
+            else:
+                if op == OUT and interactive == False:
+                    output.append(op(vars, interactive=False))
+                    if debug: print(output)
+                    #self.halted = True
+                    self.idx += 0
+                    #return output[-1] 
+                else:
+                    op(vars)
+            ignore = numVar
+            self.idx += 1
+
+
 
 def runPartOne():
     #optimize([3,15,3,16,1002,16,10,16,1,16,15,15,4,15,99,0,0])
@@ -334,7 +425,7 @@ def runPartTwo():
     prog = loadintCode('input_day7')
     optimize2(prog)
     
-def run_small_test():
+def run_small_test_1():
     # _in = 7
     # _exp = 999
     # _prog = [3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99]
@@ -348,8 +439,15 @@ def run_small_test():
     progD = [3,26,1001,26,-4,26,3,27,1002,27,2,27,1,27,26,27,4,27,1001,28,-1,28,1005,28,6,99,0,0,5]
     maxThrust, phaseSeq = optimize2(progD)
 
+def run_small_test():
+    _prog = [109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99]
+    booster = Boost(_prog)
+    #booster.inp.put(_in)
+    _out = booster.run(debug=False, interactive=False)
+    print(_out)
+    
 
 if __name__ == '__main__':
-    runPartOne()
-    #run_small_test()
-    runPartTwo()
+    #runPartOne()
+    run_small_test()
+    #runPartTwo()
