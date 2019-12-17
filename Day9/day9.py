@@ -435,9 +435,11 @@ def runPartOne():
     print(_out)
     
 def runPartTwo():
-    #optimize([3,15,3,16,1002,16,10,16,1,16,15,15,4,15,99,0,0])
-    prog = loadintCode('input_day7')
-    optimize2(prog)
+    progin = loadintCode('input_day9')
+    booster = Boost(progin)
+    booster.inp.put(2)
+    _out = booster.run(debug=True, interactive=False)
+    print(_out)
     
 def run_small_test_1():
     # _in = 7
@@ -464,4 +466,4 @@ def run_small_test():
 if __name__ == '__main__':
     runPartOne()
     #run_small_test()
-    #runPartTwo()
+    runPartTwo()
