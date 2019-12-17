@@ -393,9 +393,21 @@ class Boost():
                     if self.inp.empty():
                         #print("empty")
                         return output
-                    self.prog[self.prog[self.idx+numVar]] = op(vars[:-1], interactive=False, value=self.inp.get(block=False))
+                    #if debug: print("{} {}".format(numVar, vars))
+                    if m == 0:
+                        self.prog[self.prog[self.idx+1]] = op(vars[:-1], interactive=False, value=self.inp.get(block=False))
+                    elif m == 2:
+                        self.prog[self.base + self.prog[self.idx+1]] = op(vars[:-1], interactive=False, value=self.inp.get(block=False))
+                    else:
+                        raise RuntimeError
                 else:
-                    self.prog[self.prog[self.idx+numVar]] = op(vars[:-1])
+                    if m == 0:
+                        self.prog[self.prog[self.idx+numVar]] = op(vars[:-1])
+                    elif m == 2:
+                        self.prog[self.base + self.prog[self.idx+numVar]] = op(vars[:-1])
+                    else:
+                        raise RuntimeError
+
             elif jumps:
                 #print("JUMP")
                 if op(vars[:-1]):
@@ -416,9 +428,11 @@ class Boost():
 
 
 def runPartOne():
-    #optimize([3,15,3,16,1002,16,10,16,1,16,15,15,4,15,99,0,0])
-    prog = loadintCode('input_day7')
-    optimize(prog)
+    progin = loadintCode('input_day9')
+    booster = Boost(progin)
+    booster.inp.put(1)
+    _out = booster.run(debug=True, interactive=False)
+    print(_out)
     
 def runPartTwo():
     #optimize([3,15,3,16,1002,16,10,16,1,16,15,15,4,15,99,0,0])
@@ -448,6 +462,6 @@ def run_small_test():
     
 
 if __name__ == '__main__':
-    #runPartOne()
-    run_small_test()
+    runPartOne()
+    #run_small_test()
     #runPartTwo()
