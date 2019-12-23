@@ -26,7 +26,6 @@ def loadintCode(fname='input'):
 class Computer():
     def __init__(self, _prog):
         self.prog = defaultdict(int)
-    
         for i in range(len(_prog)):
             self.prog[i] = int(_prog[i])
         self.inp           = queue.Queue()
@@ -106,7 +105,6 @@ class Computer():
     def END(self):
         #print("END")
         return "END"
-
 
     def decode(self,val):
         if val in self.instrSet.keys():
@@ -207,15 +205,16 @@ class Painter:
         self.position = [0,0]
         self.painted = defaultdict(int)
         self.intCode = _intCode.copy()
+        self.computer = Computer(self.intCode)
 
     def paint_black(self):
-        self.painted[self.position] = 0
+        self.painted[tuple(self.position)] = 0
 
     def paint_white(self):
-        self.painted[self.position] = 1
+        self.painted[tuple(self.position)] = 1
     
     def paint(self, color):
-        self.painted[self.position] = color
+        self.painted[tuple(self.position)] = color
 
     def turn_left(self):
         if self.direction == '^':
@@ -253,7 +252,7 @@ class Painter:
             self.position[1] = oldPos[1]
 
     def color_from_value(self, value):
-        if value == 0:
+        if value == 0 or value == None:
             return '..'
         elif value == 1:
             return '##'
@@ -264,13 +263,47 @@ class Painter:
         # check constraints
         if xmax-xmin <=0 or ymax-ymin <= 0:
             raise ValueError("Each dimension has to be bigger than 0, min has to be lower than max")
+        print()
+        print()
         for x in range(xmin, xmax):
             for y in range(ymin, ymax):
                 print("{}".format(self.color_from_value(self.painted[(x,y)])), end='')
             print()
         print()
             
-                
+    def draw_with_border(self, border = 2):
+        xmin = min(self.painted.keys(), key= lambda x: x[0])[0] - border
+        xmax = max(self.painted.keys(), key= lambda x: x[0])[0] + border
+
+        ymin = min(self.painted.keys(), key= lambda x: x[1])[1] - border
+        ymax = max(self.painted.keys(), key= lambda x: x[1])[1] + border
+        print()
+        print()
+        print("x: [{}, {}]    y: [{}, {}]".format(xmin, xmax, ymin, ymax))
+        self.draw(xmin, xmax, ymin, ymax)
+
+    def step(self, debug=False):
+        currentColor = self.painted[tuple(self.position)]
+        if currentColor == None:
+            currentColor = 0
+        self.computer.inp.put(currentColor)
+        out = self.computer.run(debug=False, interactive=False)
+        self.paint(out[0])
+        if debug: print("paint pos {} with color {}".format(self.position, out[0]))
+        if debug: print("{}: {}".format(len(self.painted), self.painted.keys))
+        if out[1] == 0:
+            self.turn_left()
+        elif out[1] == 1:
+            self.turn_right()
+        else:
+            raise ValueError("strange strange strange ...")
+        self.advance()
+
+    def run(self):
+        while not self.computer.finisehd:
+            print('*', end='')
+            self.step()
+
 
 def run_small_test():
     print("small Test 1")
@@ -293,6 +326,14 @@ def runPartOne():
     intCode = loadintCode('input11')
     print("create painter")
     painter = Painter(intCode)
+    for _ in range(10):
+        painter.step(debug=True)
+    painter.run()
+    print("count of painted values")
+    print(len(painter.painted))
+    painter.draw_with_border()
+    print("count of painted values")
+    print(len(painter.painted))
 
 
 def run_small_test2():
