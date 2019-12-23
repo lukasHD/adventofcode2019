@@ -26,13 +26,13 @@ class Painter:
         self.painted = defaultdict(int)
 
     def paint_black(self):
-        self.painted(self.position) = 0
+        self.painted[self.position] = 0
 
     def paint_white(self):
-        self.painted(self.position) = 1
+        self.painted[self.position] = 1
     
     def paint(self, color):
-        self.painted(self.position) = color
+        self.painted[self.position] = color
 
     def turn_left(self):
         if self.direction == '^':
