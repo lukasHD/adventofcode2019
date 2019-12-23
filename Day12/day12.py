@@ -3,6 +3,22 @@
 # Io, Europa, Ganymede, and Callisto
 
 from itertools import combinations
+import time
+from functools import reduce
+
+def gcd(a, b):
+    """Return greatest common divisor using Euclid's Algorithm."""
+    while b:      
+        a, b = b, a % b
+    return a
+
+def lcm(a, b):
+    """Return lowest common multiple."""
+    return a * b // gcd(a, b)
+
+def lcmm(*args):
+    """Return lcm of args."""   
+    return reduce(lcm, args)
 
 class Moon():
 
@@ -14,6 +30,21 @@ class Moon():
         self.vy = _vy
         self.vz = _vz
         self.name = _name
+        self.x0  = _x
+        self.y0  = _y
+        self.z0  = _z
+        self.v0x = _vx
+        self.v0y = _vy
+        self.v0z = _vz
+
+    def isInitialX(self):
+        return bool(self.x == self.x0 and self.vx == self.v0x)
+
+    def isInitialY(self):
+        return bool(self.y == self.y0 and self.vy == self.v0y)
+
+    def isInitialZ(self):
+        return bool(self.z == self.z0 and self.vz == self.v0z)
 
     def print(self):
         print("{:>10}: pos=<x={:4d}, y={:4d}, z={:4d}>, vel=<x={:4d}, y={:4d}, z={:4d}>".format(self.name, self.x, self.y, self.z, self.vx, self.vy, self.vz))
@@ -37,6 +68,9 @@ class System():
     def __init__(self):
         self.MoonList =[]
         self.steps = 0
+        self.repeatX = 0
+        self.repeatY = 0
+        self.repeatZ = 0
 
     def addMoon(self, _moon):
         self.MoonList.append(_moon)
@@ -74,7 +108,7 @@ class System():
 
     def step(self):
         self.steps += 1
-        print("Step {}".format(self.steps))
+        #print("Step {}".format(self.steps))
         # calc gravity for each pair in moons
         for moonID in combinations(range(len(self.MoonList)),  r=2):
             #print("Gravity of {:>10} and {:>10}".format(moons[0].name, moons[1].name))
@@ -87,6 +121,29 @@ class System():
         for moon in self.MoonList:
             moon.print()
 
+    def isInitialX(self):
+        ret = True
+        for moon in self.MoonList:
+            if not moon.isInitialX(): return False
+        self.repeatX = self.steps
+        print("X repeats after {:6d} steps".format(self.repeatX))
+        return ret
+
+    def isInitialY(self):
+        ret = True
+        for moon in self.MoonList:
+            if not moon.isInitialY(): return False
+        self.repeatY = self.steps
+        print("Y repeats after {:6d} steps".format(self.repeatY))
+        return ret
+
+    def isInitialZ(self):
+        ret = True
+        for moon in self.MoonList:
+            if not moon.isInitialZ(): return False
+        self.repeatZ = self.steps
+        print("Z repeats after {:6d} steps".format(self.repeatZ))
+        return ret
 
 def run_small_test():
     print("small Test 1")
@@ -113,18 +170,61 @@ def runPartOne():
     system.addMoon(Moon(_name='Europa'  , _x=17, _y=-10, _z=-8  ))
     system.addMoon(Moon(_name='Ganymede', _x=-1, _y=-15, _z=2   ))
     system.addMoon(Moon(_name='Callisto', _x=12, _y=-4 , _z=-4  ))
+    start_time = time.time()
     for _ in range(1000):
         system.step()
+    print(f"\nTime required: {(time.time() - start_time)*1000:.2f} ms\n")
     system.print()
     print(system.getTotEnergy())
 
 def run_small_test2():
     print("small Test 2")
     print("############")
+    # <x=-8, y=-10, z=0>
+    # <x=5, y=5, z=10>
+    # <x=2, y=-7, z=3>
+    # <x=9, y=-8, z=-3>
+    system = System()
+    system.addMoon(Moon(_name='Io'      , _x=-8, _y=-10, _z= 0 ))
+    system.addMoon(Moon(_name='Europa'  , _x= 5, _y=  5, _z=10 ))
+    system.addMoon(Moon(_name='Ganymede', _x= 2, _y= -7, _z= 3 ))
+    system.addMoon(Moon(_name='Callisto', _x= 9, _y= -8, _z=-3 ))
+    start_time = time.time()
+    for _ in range(100000):
+        system.step()
+        if system.repeatX <= 0: system.isInitialX()
+        if system.repeatY <= 0: system.isInitialY()
+        if system.repeatZ <= 0: system.isInitialZ()
+        if system.repeatX > 0 and system.repeatY > 0 and system.repeatZ > 0: break
+    print(f"\nTime required: {(time.time() - start_time)*1000:.2f} ms\n")
+    system.print()
+    print(system.getTotEnergy())
+    res = lcmm(system.repeatX, system.repeatY, system.repeatZ)
+    print(res)
+    return res
+
 
 def runPartTwo():
     print("run Part Two")
     print("############")
+    system = System()
+    system.addMoon(Moon(_name='Io'      , _x=1 , _y=3  , _z=-11 ))
+    system.addMoon(Moon(_name='Europa'  , _x=17, _y=-10, _z=-8  ))
+    system.addMoon(Moon(_name='Ganymede', _x=-1, _y=-15, _z=2   ))
+    system.addMoon(Moon(_name='Callisto', _x=12, _y=-4 , _z=-4  ))
+    start_time = time.time()
+    for _ in range(10000000):
+        system.step()
+        if system.repeatX <= 0: system.isInitialX()
+        if system.repeatY <= 0: system.isInitialY()
+        if system.repeatZ <= 0: system.isInitialZ()
+        if system.repeatX > 0 and system.repeatY > 0 and system.repeatZ > 0: break
+    print(f"\nTime required: {(time.time() - start_time)*1000:.2f} ms\n")
+    system.print()
+    print(system.getTotEnergy())
+    res = lcmm(system.repeatX, system.repeatY, system.repeatZ)
+    print(res)
+    return res
 
 
 if __name__ == '__main__':
