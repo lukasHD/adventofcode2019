@@ -255,7 +255,7 @@ class Painter:
         if value == 0 or value == None:
             return '  '
         elif value == 1:
-            return '##'
+            return '▮▮'
         else:
             raise ValueError("Color does not exist")
 
