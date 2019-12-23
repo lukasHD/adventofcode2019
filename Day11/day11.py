@@ -253,7 +253,7 @@ class Painter:
 
     def color_from_value(self, value):
         if value == 0 or value == None:
-            return '..'
+            return '  '
         elif value == 1:
             return '##'
         else:
@@ -265,8 +265,8 @@ class Painter:
             raise ValueError("Each dimension has to be bigger than 0, min has to be lower than max")
         print()
         print()
-        for x in range(xmin, xmax):
-            for y in range(ymin, ymax):
+        for y in range(ymin, ymax):
+            for x in range(xmin, xmax):
                 print("{}".format(self.color_from_value(self.painted[(x,y)])), end='')
             print()
         print()
@@ -343,6 +343,17 @@ def run_small_test2():
 def runPartTwo():
     print("run Part Two")
     print("############")
+    print("load Code")
+    intCode = loadintCode('input11')
+    print("create painter")
+    painter = Painter(intCode)
+    painter.painted[tuple(painter.position)] = 1
+    painter.run()
+    print("count of painted values")
+    print(len(painter.painted))
+    painter.draw_with_border()
+    print("count of painted values")
+    print(len(painter.painted))
 
 
 if __name__ == '__main__':
