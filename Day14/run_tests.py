@@ -79,6 +79,18 @@ class TestRunner(unittest.TestCase):
         ores = day14.getOreForFuel(inpD)
         self.assertEqual(ores, 2210736)
 
+    def test_day14_2_2(self):
+        ores = day14.getMax(inpB)
+        self.assertEqual(ores, 82892753)
+
+    def test_day14_2_3(self):
+        ores = day14.getMax(inpC)
+        self.assertEqual(ores, 5586022)
+
+    def test_day14_2_4(self):
+        ores = day14.getMax(inpD)
+        self.assertEqual(ores, 460664)
+
 
 if __name__ == '__main__':
     unittest.main()
