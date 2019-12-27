@@ -8,6 +8,14 @@ inpA = """10 ORE => 10 A
 7 A, 1 D => 1 E
 7 A, 1 E => 1 FUEL"""
 
+inpAA = """9 ORE => 2 A
+8 ORE => 3 B
+7 ORE => 5 C
+3 A, 4 B => 1 AB
+5 B, 7 C => 1 BC
+4 C, 1 A => 1 CA
+2 AB, 3 BC, 4 CA => 1 FUEL"""
+
 inpB = """157 ORE => 5 NZVS
 165 ORE => 6 DCFZ
 44 XJWVT, 5 KHKGT, 1 QDVJ, 29 NZVS, 9 GPVTF, 48 HKGWZ => 1 FUEL
@@ -52,23 +60,23 @@ inpD = """171 ORE => 8 CNZTR
 class TestRunner(unittest.TestCase):
     
     def test_day14_1_1(self):
-        inp = day14.load(inpA)
-        ores = day14.getOreForFuel(inp)
+        ores = day14.getOreForFuel(inpA)
+        self.assertEqual(ores, 31)
+
+    def test_day14_1_1b(self):
+        ores = day14.getOreForFuel(inpAA)
         self.assertEqual(ores, 165)
 
     def test_day14_1_2(self):
-        inp = day14.load(inpB)
-        ores = day14.getOreForFuel(inp)
+        ores = day14.getOreForFuel(inpB)
         self.assertEqual(ores, 13312)
 
     def test_day14_1_3(self):
-        inp = day14.load(inpC)
-        ores = day14.getOreForFuel(inp)
+        ores = day14.getOreForFuel(inpC)
         self.assertEqual(ores, 180697)
 
     def test_day14_1_4(self):
-        inp = day14.load(inpD)
-        ores = day14.getOreForFuel(inp)
+        ores = day14.getOreForFuel(inpD)
         self.assertEqual(ores, 2210736)
 
 

@@ -18,26 +18,39 @@ class Resources:
         if rest == None:
             rest = defaultdict(int)
 
-        print("want to produce {} {}".format(quantity, target))
 
         for key in self.reactions:
             if key[1] == target:
-                print("For {} {} I need: {}".format(key[0], key[1], self.reactions[key]))
-                # claculate how many of those I need
-                multiple = quantity // key[0]
-                if quantity % key[0] != 0:
-                    multiple += 1
-                overproduced = multiple * key[0] - quantity
-                print("Therefore produce '{} {}' {} times and keep {} pieces".format(key[0], key[1], multiple, overproduced))
+                print("want to produce {} {} and already have {} {}".format(quantity, target, rest[target], target))
+                print("can do {} {} using: {} ".format(key[0], key[1], self.reactions[key]))
+                
+                if not (quantity - rest[target]) % key[0]:
+                    rest[target] = 0
+                    a = (quantity - rest[target]) // key[0]
+                    print("glatt rest[{}]=0  a = {}".format(target, a))
+                else:
+                    a = ((quantity - rest[target]) // key[0]) + 1
+                    rest[target] = key[0] - ((quantity - rest[target]) % key[0])
+                    print("krumm rest[{}]={}  a = {}".format(target, rest[target], a))
+
+                #print(a)
+                if a == 0:
+                    return 0, rest
+                # multiple = quantity // key[0]
+                # if quantity % key[0] != 0:
+                #     multiple += 1
+                # overproduced = multiple * key[0] - quantity
+                print("Therefore produce '{} {}' {} times and keep {} pieces".format(key[0], key[1], a, rest[target]))
+                #rest[key[1]] += overproduced
                 cost = 0
                 #depth = 0
                 for source in self.reactions[key]:
                     if source[1] == "ORE":
-                        return source[0]
-                    bla = self.produce(source[1], source[0] * multiple, rest)
+                        return source[0], rest
+                    bla, rest = self.produce(source[1], source[0] * a, rest)
                     #print(bla)
                     cost += bla
-                return cost
+                return cost, rest
         print(cost)
                 
 
@@ -56,8 +69,10 @@ def load(string):
     resourceTree.showReactions()
     return resourceTree
 
-def getOreForFuel(mapping):
-    return 10
+def getOreForFuel(inp):
+    myTree = load(inp)
+    aa = myTree.produce("FUEL", 1, None)
+    return aa[0]
 
 def run_small_test():
     print("small Test 1")
