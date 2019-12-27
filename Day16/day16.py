@@ -1,4 +1,4 @@
-# --- Day 14: Space Stoichiometry ---
+# 
 
 
 def run_small_test():
