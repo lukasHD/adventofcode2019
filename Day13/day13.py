@@ -3,6 +3,7 @@
 
 from collections import defaultdict
 import queue
+import time 
 
 def loadintCode(fname='input'):
     with open(fname, 'r') as f:
@@ -248,10 +249,14 @@ class Arcade:
         print()
         print()
         for y in range(ymin, ymax):
+            cnt = 0
             for x in range(xmin, xmax):
+                cnt += 1
                 if x == -1 and y == 0:
-                    print("Score: {}". format(self.screen[(x,y)]))
-                    print("***************************************")
+                    print("  Score: {}". format(self.screen[(x,y)]))
+                    #print("***************************************")
+                    for _ in range(cnt):
+                        print("{}".format(self.color_from_value(0)), end='')
                 else:
                     print("{}".format(self.color_from_value(self.screen[(x,y)])), end='')
             print()
@@ -297,7 +302,7 @@ class Arcade:
         x      = out.get()
         y      = out.get()
         tileID = out.get()
-        if x == -1 and y == 0:
+        #if x == -1 and y == 0:
             # print the counter
             #print ("Current score: {}".format(tileID))
         if tileID == 4: 
@@ -324,8 +329,20 @@ class Arcade:
             #print(self.computer.finished)
 
     def play(self):
+        startTime = int(time.time()*1000)
+        print(startTime)
+        time.sleep(1)
+        now = int(time.time()*1000)
+        print(now - startTime)
+        startTime = int(time.time()*1000)
         while not self.computer.finished:
             #print('*', end='')
+            now = int(time.time()*1000)
+            if now - startTime > 500:
+                for _ in range(5):
+                    print()
+                self.draw_with_border(0)
+                startTime = int(time.time()*1000)
             self.stepSimulated()
             #print(self.computer.finished)
 
