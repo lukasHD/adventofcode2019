@@ -233,6 +233,84 @@ def runPartOne():
 def run_small_test2():
     print("small Test 2")
     print("############")
+    intcode = loadintCode()
+    counter = 0
+    buffer = 3
+    minX = 0
+    maxX = 650
+    ship=99
+    beam = defaultdict(lambda: defaultdict(int))
+    minmax = defaultdict(list)
+    for y in range(700,5000):
+        numberOfPoints = 0
+        prev = 0
+        for x in range(600,5000):
+            if x < minX -buffer :
+                #print(" ",end='')
+                continue
+            if x > max(15,maxX +buffer):
+                #print(" ",end='')
+                continue
+            if x > minX +buffer and x < maxX -buffer and maxX-minX > 2*buffer:
+                #print("+",end='')
+                beam[y][x] = 1
+                numberOfPoints += 1
+                continue
+            c = Computer(intcode)
+            c.inp.put(x)
+            c.inp.put(y)
+            out = c.run()
+            result = list(out.queue)[0]
+            beam[y][x] = result
+            if result == 0:
+                #print(".",end='')
+                if prev == 1:
+                    maxX = x-1
+                    prev = 0
+            elif result == 1:
+                #print("#",end='')
+                if prev==0:
+                    minX = x
+                    prev = 1
+                counter += 1
+                numberOfPoints += 1
+        minmax[y] = [numberOfPoints, minX, maxX]
+        print("  {}  [{}:{}]    --    {}    --     {}".format(numberOfPoints, minX, maxX, minmax[y-ship], y),end='')
+        if numberOfPoints > ship and minmax[y-ship][0] > ship :
+            if minmax[y-ship][2] < minX+98:
+                print()
+                continue
+            if not (minmax[y-ship][1] <= minX+ship <=minmax[y-ship][2]):
+                print()
+                continue
+            try:
+                #print(list(beam.keys()))
+                unl = beam[y][minX]
+                unr = beam[y][minX+ship]
+                obl = beam[y-ship][minX]
+                print( list( beam[y-ship].keys() ) )
+                obr = beam[y-ship][minX+ship]
+            except KeyError :
+                print("aaa")
+                #continue
+            print("\n    unl f({},{}) = {}".format(minX, y, unl))
+            print("    unr f({},{}) = {}".format(minX+ship, y, unr))
+            print("    obl f({},{}) = {}".format(minX, y-ship, obl))
+            print("    obr f({},{}) = {}".format(minX+ship, y-ship, obr))
+            if unl == 0 or unr == 0 or obl == 0 or obr == 0:
+                continue
+            else:
+                print("seems to fit")
+                a = 10000*minX+(y-ship)
+                print(a)
+                break
+        
+        print()
+        # calc min and max x for this row
+        if numberOfPoints == 0:
+            continue
+
+
 
 def runPartTwo():
     print("run Part Two")
@@ -241,6 +319,6 @@ def runPartTwo():
 
 if __name__ == '__main__':
     run_small_test()
-    runPartOne()
+    #runPartOne()
     run_small_test2()
     runPartTwo()
