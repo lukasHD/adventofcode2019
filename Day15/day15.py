@@ -334,14 +334,14 @@ class Robot():
         return possible
 
     def exploreRand(self, maxcount=3000):
-        print("Start Exploring\n\n\n")
+        #print("Start Exploring\n\n\n")
         self.count = 0
         while (True):
             if self.count > maxcount:
                 break
             self.count += 1
             directions = self.getPossible()
-            print("availiable {}  last direction {}".format(directions, self.lastDirection))
+            #print("availiable {}  last direction {}".format(directions, self.lastDirection))
             if len(directions) == 1:
                 self.step(directions[0], debug=False)
                 self.lastDirection = directions[0]
@@ -360,17 +360,17 @@ class Robot():
                 directions.remove(3)
                 emergency = 3
             for _ in range(len(directions)):
-                print("choose from {}".format(directions))
+                #print("choose from {}".format(directions))
                 nextdir = random.choice(directions)
                 directions.remove(nextdir)
                 emerg = True
-                if self.step(nextdir, debug=True) != 0:
+                if self.step(nextdir, debug=False) != 0:
                     self.lastDirection = nextdir
                     #print("break")
                     emerg=False
                     break
             if emerg:
-                self.step(emergency, debug=True)
+                self.step(emergency, debug=False)
                 self.lastDirection = emergency
 
     def printMinMax(self):
