@@ -214,7 +214,9 @@ class Robot():
         self.map = defaultdict(lambda: defaultdict(constant_factory(int(-1))))
         
         self.map[0][0] = 1
+        self.tree = None
         self.position = [0,0] # x to the right and y down ==> N is up(-y) S is down(+y) E is right(+x) W is left(-x)
+        self.oxygen = None
         self.xmin = 0
         self.xmax = 0
         self.ymin = 0
@@ -236,6 +238,8 @@ class Robot():
         elif value == 2:
             #return ' ◎ '
             return ' W '
+        elif value == 5:
+            return ' ~ '
         else:
             raise ValueError
 
@@ -248,6 +252,16 @@ class Robot():
             return 1
         elif direction == 4:
             return 2
+
+    def turnLeft(self, direction):
+        if   direction == 1:
+            return 3
+        elif direction == 2:
+            return 4
+        elif direction == 3:
+            return 2
+        elif direction == 4:
+            return 1
 
     def step(self, direction, debug=True):
         # north (1), south (2), west (3), and east (4)
@@ -291,6 +305,7 @@ class Robot():
         elif status == 2:
             # found the oxygen
             self.position = list(newPos)
+            self.oxygen = list(newPos)
             self.lastDirection = direction
             if debug: print("Oxygen")
             return 2
@@ -464,6 +479,169 @@ class Robot():
 
         x.join()
 
+    def find2(self, visual=True):
+        print("try to find all")
+        if visual:
+            x = threading.Thread(target=self.guiThread)
+            #threads.append(x)
+            x.start()
+            for i in range(3,0):
+                print("put {}".format(i))
+                self.queueGUI.put(str(i))
+                time.sleep(1)
+
+        counter = 0
+        start_time = time.time()
+        currentDirection = 1
+        steptime = 0.0001
+        if visual: steptime = 0.02
+        while counter < 3000:
+            if self.position == [0,0] and counter > 1500:
+                break
+            while (now := time.time()) - start_time <= steptime and visual:
+                time.sleep(0.01)
+            start_time = now
+            counter += 1
+            
+            if visual: self.queueGUI.put(self.getImage())
+            self.getPossible()
+            try:
+                nextDirection = self.turnRight(currentDirection)
+                if self.step(nextDirection, debug=False) != 0:
+                    currentDirection = nextDirection
+                    continue
+                if self.step(currentDirection, debug=False) != 0:
+                    continue
+                nextDirection = self.turnLeft(currentDirection)
+                if self.step(nextDirection, debug=False) != 0:
+                    currentDirection = nextDirection
+                    continue
+                nextDirection = self.getReverse(currentDirection)
+                if self.step(nextDirection, debug=False) != 0:
+                    currentDirection = nextDirection
+                    continue
+            except:
+                pass
+        if visual: self.queueGUI.put(self.getImage())
+        print("finisehd")
+        print("Took me {} steps to discover the labyrith".format(counter))
+
+        if visual: x.join()
+
+    def convert2tree(self):
+        print("Try to convert map to a tree we can search")
+        #if self.oxygen == None:
+        #    raise ValueError("Should explore first")
+        tree = defaultdict(list)
+        buffer = 1
+        self.printMinMax()
+        for y in range(self.ymin -buffer, self.ymax +buffer ):
+            for x in range(self.xmin -buffer, self.xmax +buffer):
+                if self.map[y][x] <= 0:
+                    # this is not a valid node
+                    continue
+                else: 
+                    if self.map[y-1][x] > 0:
+                        tree[(x,y)].append((x,y-1))
+                    if self.map[y+1][x] > 0:
+                        tree[(x,y)].append((x,y+1))
+                    if self.map[y][x-1] > 0:
+                        tree[(x,y)].append((x-1,y))
+                    if self.map[y][x+1] > 0:
+                        tree[(x,y)].append((x+1,y))
+        #print(tree)
+        self.tree = tree
+
+    def BFS(self):
+        if self.tree == None:
+            raise ValueError("convert to tree first")
+
+        # finds shortest path between 2 nodes of a graph using BFS
+        def bfs_shortest_path(graph, start, goal):
+            print("{} --- {} --- {}".format(graph, start, goal))
+            # keep track of explored nodes
+            explored = []
+            # keep track of all the paths to be checked
+            queue = [[start]]
+        
+            # return path if start is goal
+            if start == goal:
+                return "That was easy! Start = goal"
+        
+            # keeps looping until all possible paths have been checked
+            while queue:
+                # pop the first path from the queue
+                path = queue.pop(0)
+                # get the last node from the path
+                node = path[-1]
+                if node not in explored:
+                    neighbours = graph[node]
+                    # go through all neighbour nodes, construct a new path and
+                    # push it into the queue
+                    for neighbour in neighbours:
+                        new_path = list(path)
+                        new_path.append(neighbour)
+                        queue.append(new_path)
+                        # return path if neighbour is goal
+                        if neighbour == goal:
+                            return new_path
+        
+                    # mark node as explored
+                    explored.append(node)
+        
+            # in case there's no path between the 2 nodes
+            return "So sorry, but a connecting path doesn't exist :("
+
+        aaaaaa = bfs_shortest_path(self.tree, (0,0), tuple(self.oxygen))
+        print(aaaaaa)
+        print(len(aaaaaa)-1)
+
+    def fillOxygen(self, visual=True):
+        if visual:
+            x = threading.Thread(target=self.guiThread)
+            #threads.append(x)
+            x.start()
+            for i in range(3,0):
+                print("put {}".format(i))
+                self.queueGUI.put(str(i))
+                time.sleep(1)
+        
+        start_time = time.time()
+        steptime = 0.0001
+        if visual: steptime = 0.02
+            
+        if visual: self.queueGUI.put(self.getImage())
+
+        x,y = list(self.oxygen)
+        self.map[y][x] = 5
+        counter = 0
+        wavefront = [tuple(self.oxygen)]
+        for _ in range(20):
+            while (now := time.time()) - start_time <= steptime and visual:
+                time.sleep(0.01)
+            start_time = now
+            # fill next neighbours
+            nextWavefront = []
+            print(wavefront)
+            while len(wavefront) > 0:
+                current = wavefront.pop()
+                for neighbor in self.tree[current]:
+                    print(neighbor)
+                    # fill neighbor mit 5 and add to next wavefront
+                    self.map[neighbor[1]][neighbor[0]] = 5
+                    nextWavefront.append(neighbor)
+                    print("fill")
+            wavefront = nextWavefront.copy()
+            if visual: self.queueGUI.put(self.getImage())
+            counter += 1
+        
+        if visual: self.queueGUI.put(self.getImage())
+        print("finisehd")
+        print("Took me {} steps to discover the labyrith".format(counter))
+
+        if visual: x.join()
+
+
     def guiThread(self):
         root = Tk()
         pane = Frame(root) 
@@ -477,12 +655,13 @@ class Robot():
         def updateImage():
             #print("in updateImage()")
             if not self.queueGUI.empty():
-                imgText = self.queueGUI.get()
+                while not self.queueGUI.empty():
+                    imgText = self.queueGUI.get()
                 #print("set Text to {}".format(imgText))
                 msg.configure(text=imgText)
-                if len(self.queueGUI.queue):
+                #if len(self.queueGUI.queue):
                     #print("clear queue")
-                    self.queueGUI.queue.clear()
+                    #self.queueGUI.queue.clear()
             #else:
                 #print("queue empty")
             root.after(100, updateImage)
@@ -502,7 +681,7 @@ class Robot():
             print()
 
     def getImage(self, buffer = 1):
-        a= "x = [{}, {}]    y = [{}, {}]\n\n".format(self.xmin, self.xmax, self.ymin, self.ymax)
+        a= "          x = [{}, {}]    y = [{}, {}]\n\n".format(self.xmin, self.xmax, self.ymin, self.ymax)
         for y in range(self.ymin -buffer, self.ymax +buffer ):
             for x in range(self.xmin -buffer, self.xmax +buffer):
                 if x == self.position[0] and y == self.position[1]:
@@ -526,6 +705,7 @@ def run_small_test():
     print(robot.step(1))
     print(robot.step(2))
     print(robot.printMap())
+    robot.convert2tree()
 
 
 def runPartOne():
@@ -533,7 +713,14 @@ def runPartOne():
     print("############")
     intcode = loadintCode()
     robot = Robot(intcode)
-    robot.find()
+    robot.find2(visual=False)
+    robot.convert2tree()
+    print(
+        robot.tree[(-20,14)]
+    )
+    robot.BFS()
+    # fill the ship with oxygen (Part2)
+    robot.fillOxygen()
 
 def run_small_test2():
     print("small Test 2")
