@@ -407,7 +407,7 @@ class Robot():
         searchPos = []
         openDirections = [] 
         steptime = 0.05
-        while counter < 150:
+        while counter < 1500:
             while (now := time.time()) - start_time <= steptime:
                 time.sleep(0.01)
             start_time = now
@@ -418,11 +418,15 @@ class Robot():
                     print("Backtrack finisehd - move in the open direction")
                     # return here for recursive functions
                     backtrack = False
-                    self.step(openDirections.pop())
+                    move = openDirections.pop()
+                    self.step(move)
+                    directionStack.append(move)
                     if len(openDirections) > 0:
                         self.decisionPoints.append([self.position, openDirections])
                 else:
-                    self.step(self.getReverse(directionStack.pop()), debug=True)
+                    move = directionStack.pop()
+                    self.step(self.getReverse(move), debug=True)
+                self.queueGUI.put(self.getImage())
                 continue
             # if len(possible) == 1:
             #     self.step(possible[0], debug=True)
@@ -437,7 +441,7 @@ class Robot():
                 directionStack.append(possible[0])
                 self.step(possible[0], debug=False)
             elif len(possible) > 1:
-                steptime = 0.5
+                #steptime = 0.5
                 # make a descision
                 self.decisionPoints.append([self.position, possible[1:]])
                 move = possible[0] # this is the decision
