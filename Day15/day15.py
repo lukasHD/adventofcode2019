@@ -7,6 +7,7 @@ from tkinter import Tk, Button, Message, Y, RIGHT, Frame, BOTH, LEFT
 import random
 import queue
 import time 
+import threading
 
 def loadintCode(fname='input'):
     with open(fname, 'r') as f:
@@ -221,6 +222,10 @@ class Robot():
         self.count = 0
         self.lastDirection = 1
 
+        self.queueGUI = queue.Queue()
+        self.decisionPoints = []
+        self.listOfDirections =[]
+
     def getCharFromValue(self, value):
         if value == -1:
             return '   '
@@ -373,6 +378,115 @@ class Robot():
                 self.step(emergency, debug=False)
                 self.lastDirection = emergency
 
+    def getReverse(self, direction):
+        if direction == 1:
+            return 2
+        elif direction == 2:
+            return 1
+        elif direction == 3:
+            return 4
+        elif direction == 4:
+            return 3
+
+    def find(self):
+        print("try to find all")
+        directionStack = []
+
+        x = threading.Thread(target=self.guiThread)
+        #threads.append(x)
+        x.start()
+
+        for i in range(3,0):
+            print("put {}".format(i))
+            self.queueGUI.put(str(i))
+            time.sleep(1)
+
+        counter = 0
+        start_time = time.time()
+        backtrack = False
+        searchPos = []
+        openDirections = [] 
+        steptime = 0.05
+        while counter < 150:
+            while (now := time.time()) - start_time <= steptime:
+                time.sleep(0.01)
+            start_time = now
+            counter += 1
+            if backtrack:
+                print("I'm here {}".format(self.position))
+                if self.position == searchPos:
+                    print("Backtrack finisehd - move in the open direction")
+                    # return here for recursive functions
+                    backtrack = False
+                    self.step(openDirections.pop())
+                    if len(openDirections) > 0:
+                        self.decisionPoints.append([self.position, openDirections])
+                else:
+                    self.step(self.getReverse(directionStack.pop()), debug=True)
+                continue
+            # if len(possible) == 1:
+            #     self.step(possible[0], debug=True)
+            # else: 
+            possible = self.getPossible()
+            try:
+                emergerncy = self.getReverse(self.lastDirection)
+                possible.remove(emergerncy)
+            except:
+                pass
+            if len(possible) == 1:
+                directionStack.append(possible[0])
+                self.step(possible[0], debug=False)
+            elif len(possible) > 1:
+                steptime = 0.5
+                # make a descision
+                self.decisionPoints.append([self.position, possible[1:]])
+                move = possible[0] # this is the decision
+                directionStack.append(move)
+                self.step(move, debug=False)
+            else:
+                searchPos, openDirections = self.decisionPoints.pop()
+                print("I'm stuck at {} - backtrack to position {}".format(self.position, searchPos))
+                backtrack = True
+                # while self.position != searchPos:
+                #     self.step(self.getReverse(directionStack.pop()))
+                # print("finished Backtrack - availiable directions {}".format(openDirections))
+                # time.sleep(2)
+                # self.step(openDirections[0])
+
+
+            self.queueGUI.put(self.getImage())
+
+        print("finisehd")
+
+        x.join()
+
+    def guiThread(self):
+        root = Tk()
+        pane = Frame(root) 
+        pane.pack(fill = BOTH, expand = True) 
+        exit_button = Button(pane, text='Exit Program', command=root.destroy)
+        exit_button.pack(side = LEFT, expand = True, fill = BOTH)
+        msg = Message(root, text="TEST TEST TEST")
+        msg.config(font=('Consolas', 10, ''))
+        msg.pack()
+
+        def updateImage():
+            #print("in updateImage()")
+            if not self.queueGUI.empty():
+                imgText = self.queueGUI.get()
+                #print("set Text to {}".format(imgText))
+                msg.configure(text=imgText)
+                if len(self.queueGUI.queue):
+                    #print("clear queue")
+                    self.queueGUI.queue.clear()
+            #else:
+                #print("queue empty")
+            root.after(100, updateImage)
+
+        root.after(100, updateImage)
+        root.mainloop()
+
+
     def printMinMax(self):
         print("x = [{}, {}]    y = [{}, {}]".format(self.xmin, self.xmax, self.ymin, self.ymax))
 
@@ -415,8 +529,7 @@ def runPartOne():
     print("############")
     intcode = loadintCode()
     robot = Robot(intcode)
-    robot.exploreRand(30)
-    print(robot.printMap())
+    robot.find()
 
 def run_small_test2():
     print("small Test 2")
@@ -451,6 +564,10 @@ def run_small_test2():
         robot.exploreRand(5)
         img = robot.getImage()
         msg.configure(text=img)
+    def find(_event=None):
+        robot.find()
+        img = robot.getImage()
+        msg.configure(text=img)
 
     N_button = Button(pane, text='North', command=N)
     N_button.pack(side = LEFT, expand = True, fill = BOTH)
@@ -464,6 +581,8 @@ def run_small_test2():
 
     R_button = Button(pane, text='RAND', command=rand)
     R_button.pack(side = LEFT, expand = True, fill = BOTH)
+    F_button = Button(pane, text='Find', command=find)
+    F_button.pack(side = LEFT, expand = True, fill = BOTH)
 
     root.bind('w', N)
     root.bind('s', S)
@@ -492,5 +611,5 @@ def runPartTwo():
 if __name__ == '__main__':
     run_small_test()
     runPartOne()
-    run_small_test2()
+    #run_small_test2()
     runPartTwo()
