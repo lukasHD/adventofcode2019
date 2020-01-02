@@ -3,6 +3,7 @@
 
 from collections import defaultdict
 from itertools import repeat
+from tkinter import Tk, Button, Message, Y, RIGHT, Frame, BOTH, LEFT
 import random
 import queue
 import time 
@@ -217,6 +218,8 @@ class Robot():
         self.xmax = 0
         self.ymin = 0
         self.ymax = 0
+        self.count = 0
+        self.lastDirection = 1
 
     def getCharFromValue(self, value):
         if value == -1:
@@ -226,7 +229,8 @@ class Robot():
         elif value == 1:
             return ' ◦ '
         elif value == 2:
-            return ' ◎ '
+            #return ' ◎ '
+            return ' W '
         else:
             raise ValueError
 
@@ -276,10 +280,13 @@ class Robot():
         elif status == 1:
             # advanced in this direction
             self.position = list(newPos)
+            self.lastDirection = direction
             if debug: print("new Position is {}".format(self.position))
             return 1
         elif status == 2:
             # found the oxygen
+            self.position = list(newPos)
+            self.lastDirection = direction
             if debug: print("Oxygen")
             return 2
 
@@ -291,7 +298,6 @@ class Robot():
         # Man darf keinen Pfad betreten, der schon in beide Richtungen besucht wurde.
         # Der Algorithmus ist beendet, wenn man wieder am Startpunkt angekommen ist.
         return 1
-
 
     def explore(self):
         print("Start Exploring")
@@ -310,9 +316,10 @@ class Robot():
                 currentDirection = nextDirection
 
     def getPossible(self):
+        backup = self.lastDirection
         possible = []
         for i in [1,2,3,4]:
-            if self.step(i, False) == 1:
+            if self.step(i, False) != 0:
                 possible.append(i)
                 # return to origin
                 if i == 1:
@@ -323,49 +330,48 @@ class Robot():
                     self.step(4, False)
                 elif i == 4:
                     self.step(3, False)
+        self.lastDirection = backup
         return possible
 
-
     def exploreRand(self, maxcount=3000):
-        print("Start Exploring")
-        count = 0
-        lastDirection = 1
+        print("Start Exploring\n\n\n")
+        self.count = 0
         while (True):
-            if count > maxcount:
+            if self.count > maxcount:
                 break
-            count += 1
+            self.count += 1
             directions = self.getPossible()
-            #print(directions)
+            print("availiable {}  last direction {}".format(directions, self.lastDirection))
             if len(directions) == 1:
                 self.step(directions[0], debug=False)
-                lastDirection = directions[0]
+                self.lastDirection = directions[0]
                 continue
             emergency = 0
-            if lastDirection == 1:
+            if self.lastDirection == 1:
                 directions.remove(2)
                 emergency = 2
-            elif lastDirection == 2:
+            elif self.lastDirection == 2:
                 directions.remove(1)
                 emergency = 1
-            elif lastDirection == 3:
+            elif self.lastDirection == 3:
                 directions.remove(4)
                 emergency = 4
-            elif lastDirection == 4:
+            elif self.lastDirection == 4:
                 directions.remove(3)
                 emergency = 3
             for _ in range(len(directions)):
-                #print("choose from {}".format(directions))
+                print("choose from {}".format(directions))
                 nextdir = random.choice(directions)
                 directions.remove(nextdir)
                 emerg = True
-                if self.step(nextdir, debug=False) == 1:
-                    lastDirection = nextdir
+                if self.step(nextdir, debug=True) != 0:
+                    self.lastDirection = nextdir
                     #print("break")
                     emerg=False
                     break
             if emerg:
-                self.step(emergency, debug=False)
-                lastDirection = emergency
+                self.step(emergency, debug=True)
+                self.lastDirection = emergency
 
     def printMinMax(self):
         print("x = [{}, {}]    y = [{}, {}]".format(self.xmin, self.xmax, self.ymin, self.ymax))
@@ -377,6 +383,16 @@ class Robot():
                 print("{}".format(self.getCharFromValue(self.map[y][x])),end='')
             print()
 
+    def getImage(self, buffer = 1):
+        a= "x = [{}, {}]    y = [{}, {}]\n\n".format(self.xmin, self.xmax, self.ymin, self.ymax)
+        for y in range(self.ymin -buffer, self.ymax +buffer ):
+            for x in range(self.xmin -buffer, self.xmax +buffer):
+                if x == self.position[0] and y == self.position[1]:
+                    a += " D "
+                    continue
+                a += "{}".format(self.getCharFromValue(self.map[y][x]))
+            a += "\n"
+        return a
 
 def run_small_test():
     print("small Test 1")
@@ -399,12 +415,74 @@ def runPartOne():
     print("############")
     intcode = loadintCode()
     robot = Robot(intcode)
-    robot.exploreRand()
+    robot.exploreRand(30)
     print(robot.printMap())
 
 def run_small_test2():
     print("small Test 2")
     print("############")
+    intcode = loadintCode()
+    robot = Robot(intcode)
+    root = Tk()
+    pane = Frame(root) 
+    pane.pack(fill = BOTH, expand = True) 
+    
+    def N(_event=None):
+        robot.step(1)
+        robot.getPossible()
+        img = robot.getImage()
+        msg.configure(text=img)
+    def S(_event=None):
+        robot.step(2)
+        robot.getPossible()
+        img = robot.getImage()
+        msg.configure(text=img)
+    def W(_event=None):
+        robot.step(3)
+        robot.getPossible()
+        img = robot.getImage()
+        msg.configure(text=img)
+    def E(_event=None):
+        robot.step(4)
+        robot.getPossible()
+        img = robot.getImage()
+        msg.configure(text=img)
+    def rand(_event=None):
+        robot.exploreRand(5)
+        img = robot.getImage()
+        msg.configure(text=img)
+
+    N_button = Button(pane, text='North', command=N)
+    N_button.pack(side = LEFT, expand = True, fill = BOTH)
+    S_button = Button(pane, text='South', command=S)
+    S_button.pack(side = LEFT, expand = True, fill = BOTH)
+
+    E_button = Button(pane, text='East', command=E)
+    E_button.pack(side = LEFT, expand = True, fill = BOTH)
+    W_button = Button(pane, text='West', command=W)
+    W_button.pack(side = LEFT, expand = True, fill = BOTH)
+
+    R_button = Button(pane, text='RAND', command=rand)
+    R_button.pack(side = LEFT, expand = True, fill = BOTH)
+
+    root.bind('w', N)
+    root.bind('s', S)
+    root.bind('a', W)
+    root.bind('d', E)
+    root.bind('r', rand)
+
+    exit_button = Button(pane, text='Exit Program', command=root.destroy)
+    exit_button.pack(side = LEFT, expand = True, fill = BOTH)
+
+    robot.step(3)
+    robot.step(3)
+    robot.step(3)
+    image = robot.getImage()
+
+    msg = Message(root, text=image)
+    msg.config(font=('Consolas', 10, ''))
+    msg.pack()
+    root.mainloop()
 
 def runPartTwo():
     print("run Part Two")
