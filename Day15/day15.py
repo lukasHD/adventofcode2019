@@ -239,7 +239,7 @@ class Robot():
             #return ' ◎ '
             return ' W '
         elif value == 5:
-            return ' ~ '
+            return 'OOO'
         else:
             raise ValueError
 
@@ -608,7 +608,7 @@ class Robot():
         
         start_time = time.time()
         steptime = 0.0001
-        if visual: steptime = 0.02
+        if visual: steptime = 0.2
             
         if visual: self.queueGUI.put(self.getImage())
 
@@ -616,28 +616,35 @@ class Robot():
         self.map[y][x] = 5
         counter = 0
         wavefront = [tuple(self.oxygen)]
-        for _ in range(20):
+        for _ in range(2000):
             while (now := time.time()) - start_time <= steptime and visual:
                 time.sleep(0.01)
             start_time = now
+            counter += 1
             # fill next neighbours
             nextWavefront = []
             print(wavefront)
+            paintedOne = False
             while len(wavefront) > 0:
                 current = wavefront.pop()
                 for neighbor in self.tree[current]:
-                    print(neighbor)
+                    #print(neighbor)
+                    if self.map[neighbor[1]][neighbor[0]] == 5:
+                        continue
                     # fill neighbor mit 5 and add to next wavefront
                     self.map[neighbor[1]][neighbor[0]] = 5
+                    paintedOne = True
                     nextWavefront.append(neighbor)
-                    print("fill")
+                    #print("fill")
+            if len(nextWavefront) == 0:
+                print("nothing left to paint")
+                break
             wavefront = nextWavefront.copy()
-            if visual: self.queueGUI.put(self.getImage())
-            counter += 1
+            if visual: self.queueGUI.put("    Counter {}\n\n{}".format(counter, self.getImage()))
         
-        if visual: self.queueGUI.put(self.getImage())
+        if visual: self.queueGUI.put("    Counter {}\n\n{}".format(counter, self.getImage()))
         print("finisehd")
-        print("Took me {} steps to discover the labyrith".format(counter))
+        print("Took me {} steps to fill the labyrith".format(counter))
 
         if visual: x.join()
 
