@@ -1,5 +1,8 @@
 # --- Day 16: Flawed Frequency Transmission ---
 
+import time
+import cProfile
+
 def int2list(inNumber):
     return list(map(int, list(inNumber)))
 
@@ -13,9 +16,10 @@ def phase(Inlist, debug=True):
                 applyPattern.append(i)
         #print("outDigit {}  ---  applypattern {}".format(outDigit, applyPattern))
         digit = 0
+        length = len(applyPattern)
         for i, el in enumerate(Inlist):
             if debug: print("{}*{:2d} + ".format(el, applyPattern[(i+1)%len(applyPattern)]), end='')
-            digit += (int(el)*applyPattern[(i+1)%len(applyPattern)])
+            digit += (int(el)*applyPattern[(i+1)%length])
         realdigit = int(list(str(digit))[-1])
         if debug: print(" = {:3d}  ==> realdigit {}".format(digit, realdigit))
         outNumber.append(realdigit)
@@ -29,12 +33,15 @@ def loadInput(fname='input'):
     print(l)
     return l
 
+def huge(InList):
+    return InList*10000
+
 def hundertPhases(inlist):
     out = ''.join(map(str, phase(inlist, debug=False)))
     print('.', end='')
-    for _ in range(99):
+    for j in range(99):
         out = ''.join(map(str, phase(out, debug=False)))
-        print('.', end='')
+        print(j)
     outList = list(out)[0:8]
     return outList
 
@@ -59,6 +66,24 @@ def runPartOne():
 def run_small_test2():
     print("small Test 2")
     print("############")
+    for n in [1,10,100,1000,10000]:
+        print("n = {:6d}  ---  ".format(n), end='')
+        Input = '80871224585914546619083218645595'
+        timeStart = time.time()
+        out = ''.join(map(str, phase(int2list(Input*n), debug=False)))
+        timeStop = time.time()
+        print("1st phase took {:08.4f}     ".format(timeStop-timeStart), end='')
+        timeStart = time.time()
+        out = ''.join(map(str, phase(int2list(out), debug=False)))
+        timeStop = time.time()
+        print("2nd phase took {:08.4f}     ".format(timeStop-timeStart), end='')
+        timeStart = time.time()
+        out = ''.join(map(str, phase(int2list(out), debug=False)))
+        timeStop = time.time()
+        print("3rd phase took {:08.4f}".format(timeStop-timeStart))
+        #cProfile.run("""phase(int2list('80871224585914546619083218645595'*10), debug=False)""")
+    
+    print(out)
 
 def runPartTwo():
     print("run Part Two")
@@ -66,7 +91,7 @@ def runPartTwo():
 
 
 if __name__ == '__main__':
-    run_small_test()
-    runPartOne()
+    #run_small_test()
+    #runPartOne()
     run_small_test2()
     runPartTwo()
