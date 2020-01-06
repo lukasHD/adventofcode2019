@@ -38,10 +38,13 @@ def huge(InList):
 
 def hundertPhases(inlist):
     out = ''.join(map(str, phase(inlist, debug=False)))
-    print('.', end='')
-    for j in range(99):
+    #print('.', end='')
+    j = 0 
+    print("{:4d}  {}".format(j, list(out)[0:8]))
+    for j in range(1,100):
         out = ''.join(map(str, phase(out, debug=False)))
-        print(j)
+        print("{:4d}  {}".format(j, list(out)[0:8]))
+
     outList = list(out)[0:8]
     return outList
 
@@ -92,6 +95,6 @@ def runPartTwo():
 
 if __name__ == '__main__':
     #run_small_test()
-    #runPartOne()
-    run_small_test2()
+    runPartOne()
+    #run_small_test2()
     runPartTwo()
