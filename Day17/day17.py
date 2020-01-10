@@ -223,8 +223,38 @@ def run_small_test():
     computer = Computer(code)
     computer.run()
     printNice(list(computer.output.queue))
-    a = getString(list(computer.output.queue))
-    print(repr(a))
+    a = str2array(getString(list(computer.output.queue))[:-2])
+    result = 0
+    for y, line in enumerate(a):
+        for x, el in enumerate(line):
+            if el == '#':
+                counter = 0
+                try: 
+                    if a[y-1][x] == '#': counter += 1
+                except:
+                    pass
+                try: 
+                    if a[y+1][x] == '#': counter += 1
+                except:
+                    pass
+                try: 
+                    if a[y][x-1] == '#': counter += 1
+                except:
+                    pass
+                try: 
+                    if a[y][x+1] == '#': counter += 1
+                except:
+                    pass
+                if counter == 4:
+                    print("Intersection at x = {} y = {}".format(x, y))
+                    result += x*y
+    print(result)
+        #     if el == '#': 
+        #         print("███", end='')
+        #     elif el == '.':
+        #         print(' ◦ ', end='')
+        # print()
+    #print(repr(a))
 
 def runPartOne():
     print("run Part One")
