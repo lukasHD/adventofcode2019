@@ -1,5 +1,27 @@
 # --- Day 18: Many-Worlds Interpretation ---
 
+from collections import defaultdict
+from copy import copy, deepcopy
+
+def string2tree(inStr):
+    return list(map(list, inStr.split('\n')))
+
+class Dungeon():
+
+    def __init__(self, inArray):
+        self.fullMap = copy(inArray)
+        self.keys = set()
+
+    def print(self):
+        print()
+        for line in self.fullMap:
+            for el in line:
+                print(el,end='')
+            print()
+        print()
+
+    def minSteps(self):
+        return 42
 
 def run_small_test():
     print("small Test 1")
@@ -32,6 +54,18 @@ def run_small_test():
 ###A#B#C################
 ###g#h#i################
 ########################"""
+
+    a = Dungeon(string2tree(AAA))
+    a.print()
+    b = Dungeon(string2tree(BBB))
+    b.print()
+    c = Dungeon(string2tree(CCC))
+    c.print()
+    d = Dungeon(string2tree(DDD))
+    d.print()
+    e = Dungeon(string2tree(EEE))
+    e.print()
+
 
 def runPartOne():
     print("run Part One")
