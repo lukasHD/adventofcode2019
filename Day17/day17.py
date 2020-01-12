@@ -203,6 +203,122 @@ class Computer():
             self.ignore = numVar
             self.idx += 1
 
+class Robot():
+
+    def __init__(self, intcode):
+        self.computer = Computer(intcode)
+        self.queueGUI = queue.Queue()
+
+    def getCharFromValue(self, value):
+        if value == -1:
+            return '   '
+        elif value == 0:
+            return '███'
+        elif value == 1:
+            return ' ◦ '
+        elif value == 2:
+            #return ' ◎ '
+            return ' W '
+        elif value == 5:
+            return 'OOO'
+        else:
+            raise ValueError
+
+    def guiThread(self):
+        root = Tk()
+        pane = Frame(root) 
+        pane.pack(fill = BOTH, expand = True) 
+        exit_button = Button(pane, text='Exit Program', command=root.destroy)
+        exit_button.pack(side = LEFT, expand = True, fill = BOTH)
+        msg = Message(root, text="TEST TEST TEST")
+        msg.config(font=('Consolas', 10, ''))
+        msg.pack()
+
+        def updateImage():
+            #print("in updateImage()")
+            if not self.queueGUI.empty():
+                while not self.queueGUI.empty():
+                    imgText = self.queueGUI.get()
+                #print("set Text to {}".format(imgText))
+                msg.configure(text=imgText)
+                #if len(self.queueGUI.queue):
+                    #print("clear queue")
+                    #self.queueGUI.queue.clear()
+            #else:
+                #print("queue empty")
+            root.after(100, updateImage)
+
+        def updateImage2():
+            #print("in updateImage()")
+            if not self.computer.output.empty():
+                oldLine = ''
+                imgText = ''
+                while True:
+                    try:
+                        el = self.computer.output.get()
+                        current =  chr(el)
+                    except:
+                        print("bla bla bla {}".format(el))
+                        continue
+                    if current in ['<', '>', 'v', '^']:
+                        bla = '█'+current+'█'
+                    elif current in ['x', 'X']:
+                        bla = ' '+current+' '
+                    elif current == '#':
+                        bla = '███'
+                    elif current == '\n':
+                        bla = current
+                    else:
+                        bla = '   '
+                    imgText += bla
+                    if current == "\n" and oldLine == "\n":
+                        break
+                    oldLine = current
+                #print("set Text to {}".format(imgText))
+                msg.configure(text=imgText)
+                #if len(self.queueGUI.queue):
+                    #print("clear queue")
+                    #self.queueGUI.queue.clear()
+            #else:
+                #print("queue empty")
+            root.after(100, updateImage2)
+
+        root.after(100, updateImage2)
+        root.mainloop()
+
+    def getImage(self):
+        return ''.join(list(map(chr, list(self.computer.output.queue) )))
+
+    def run(self, visual=True):
+        if visual:
+            print("Start GUI Thread")
+            x = threading.Thread(target=self.guiThread)
+            x.start()
+            for i in range(3,0):
+                print("put {}".format(i))
+                self.queueGUI.put(str(i))
+                time.sleep(1)
+
+        mainProg = "A,A,B,C,B,C,B,C,B,A\n"
+        progA    = "L,10,L,8,R,8,L,8,R,6\n"
+        progB    = "R,6,R,8,R,8\n"
+        progC    = "R,6,R,6,L,8,L,10\n"
+        contOut  = "y\n"
+
+        command = mainProg + progA + progB + progC + contOut
+
+        for char in command:
+            val = ord(char)
+            print(val,end='')
+            self.computer.inp.put(val)
+        
+        print("\n\nRun Computer\n")
+        self.computer.run()
+
+        if visual: self.queueGUI.put(self.getImage())
+
+        if visual: x.join()
+
 def getString(liste):
     return ''.join(list(map(chr, liste)))
 
@@ -219,6 +335,10 @@ def run_small_test():
     print("small Test 1")
     print("############")
 
+
+def runPartOne():
+    print("run Part One")
+    print("############")
     code = loadintCode()
     computer = Computer(code)
     computer.run()
@@ -256,10 +376,6 @@ def run_small_test():
         # print()
     #print(repr(a))
 
-def runPartOne():
-    print("run Part One")
-    print("############")
-
 def run_small_test2():
     print("small Test 2")
     print("############")
@@ -267,10 +383,16 @@ def run_small_test2():
 def runPartTwo():
     print("run Part Two")
     print("############")
+    code = loadintCode()
+    # switch to interactive mode
+    code[0] = 2
+    #print(repr(code))
+    robot = Robot(code)
+    robot.run()
 
 
 if __name__ == '__main__':
-    run_small_test()
+    #run_small_test()
     runPartOne()
-    run_small_test2()
+    #run_small_test2()
     runPartTwo()
