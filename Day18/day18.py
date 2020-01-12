@@ -74,6 +74,7 @@ class Dungeon():
         self.cleaned = True
 
     def takeKey(self, key):
+        print("in takeKey(self, {})".format(key))
         self.keys.add(key)
         for y, line in enumerate(self.fullMap):
             for x, el in enumerate(line):
@@ -148,6 +149,7 @@ class Dungeon():
             print("{}: {}".format(k, v))
 
     def minSteps(self):
+        
         return 42
 
 def run_small_test():
