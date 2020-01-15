@@ -17,6 +17,7 @@ def string2tree(inStr):
 class Dungeon():
 
     def __init__(self, inArray):
+        print("\n~~~~~~~~~~~~ new Dungeon ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
         self.fullMap = copy(inArray)
         self.cleanMap = copy(inArray)
         self.cleaned = False
@@ -26,19 +27,32 @@ class Dungeon():
         self.tree = defaultdict(list)
         self.robotPosition = (None, None)
         self.reachableKeys = set()
+        self.allKeys = set()
+        self.keyPos = {}
+        self.getAllKeys()
+        self.sequences = []
+
+    def getAllKeys(self):
+        for y, line in enumerate(self.fullMap):
+            for x, el in enumerate(line):
+                if el in self.low:
+                    self.allKeys.add(el)
+                    self.keyPos[el] = (x,y)
+        print(self.allKeys)
+        print(self.keyPos)
 
     def print(self, cleaned=True):
         if cleaned:
             if not self.cleaned: self.cleanUp()
             mapp = deepcopy(self.cleanMap)
-            x, y = self.robotPosition
-            try:
-                mapp[y][x] = '@'
-            except:
-                pass
         else:
             mapp = self.fullMap
         print()
+        x, y = self.robotPosition
+        try:
+            mapp[y][x] = '@'
+        except:
+            pass
         for line in mapp:
             for el in line:
                 print(el,end='')
@@ -74,7 +88,7 @@ class Dungeon():
         self.cleaned = True
 
     def takeKey(self, key):
-        print("in takeKey(self, {})".format(key))
+        #print("in takeKey(self, {})".format(key))
         self.keys.add(key)
         for y, line in enumerate(self.fullMap):
             for x, el in enumerate(line):
@@ -82,12 +96,12 @@ class Dungeon():
                 if el in self.low:
                     # is lower case - remove all keys we have
                     if el in self.keys:
-                        print("remove key {}".format(el))
+                        #print("remove key {}".format(el))
                         self.fullMap[y][x] = '.'
                 elif el in self.upper:
                     # is upper case - remove the door we have the key for
                     if el.lower() in self.keys:
-                        print("remove Door {}".format(el))
+                        #print("remove Door {}".format(el))
                         self.fullMap[y][x] = '.'
 
     def createTree(self):
@@ -105,52 +119,99 @@ class Dungeon():
                     if self.cleanMap[y][x+1] in ['.', '@']+self.low:
                         self.tree[(x,y)].append((x+1,y))
 
-    def findReachableKeys(self):
-        self.reachableKeys = set()
-        #print("{} --- {} --- {}".format(graph, start, goal))
-        goal = 'w'
-        start = self.robotPosition
-        # keep track of explored nodes
-        explored = []
-        # keep track of all the paths to be checked
-        queue = [[start]]
-    
-        # return path if start is goal
-        if start == goal:
-            return "That was easy! Start = goal"
-    
-        # keeps looping until all possible paths have been checked
-        while queue:
-            # pop the first path from the queue
-            path = queue.pop(0)
-            # get the last node from the path
-            node = path[-1]
-            if node not in explored:
-                neighbours = self.tree[node]
-                # go through all neighbour nodes, construct a new path and
-                # push it into the queue
-                for neighbour in neighbours:
-                    if self.fullMap[neighbour[1]][neighbour[0]] in self.low: self.reachableKeys.add((self.fullMap[neighbour[1]][neighbour[0]], neighbour))
-                    new_path = list(path)
-                    new_path.append(neighbour)
-                    queue.append(new_path)
-                    # return path if neighbour is goal
-                    if neighbour == goal:
-                        return new_path
-    
-                # mark node as explored
-                explored.append(node)
-    
-        # in case there's no path between the 2 nodes
-        return "So sorry, but a connecting path doesn't exist :("
+    def findReachableKeys(self, startPos):
+        
+        # finds shortest path between 2 nodes of a graph using BFS
+        def bfs_shortest_path(graph, start, goal):
+            #print("{} --- {} --- {}".format(graph, start, goal))
+            #print("{} --- {}".format(start, goal))
+            # keep track of explored nodes
+            explored = []
+            # keep track of all the paths to be checked
+            queue = [[start]]
+        
+            # return path if start is goal
+            if start == goal:
+                return 0
+        
+            # keeps looping until all possible paths have been checked
+            while queue:
+                # pop the first path from the queue
+                path = queue.pop(0)
+                # get the last node from the path
+                node = path[-1]
+                if node not in explored:
+                    neighbours = graph[node]
+                    # go through all neighbour nodes, construct a new path and
+                    # push it into the queue
+                    for neighbour in neighbours:
+                        new_path = list(path)
+                        new_path.append(neighbour)
+                        queue.append(new_path)
+                        # return path if neighbour is goal
+                        if neighbour == goal:
+                            return new_path
+        
+                    # mark node as explored
+                    explored.append(node)
+        
+            # in case there's no path between the 2 nodes
+            return -1
+        self.reachableKeys = []
+        for key in self.allKeys - self.keys:
+            path = bfs_shortest_path(self.tree, self.robotPosition, self.keyPos[key])
+            if path != 0 and path != -1:
+                #print("key = {}; path = {}".format(key, path))
+                self.reachableKeys.append((key, len(path)-1))
+        
+        self.reachableKeys.sort(key=lambda x: x[1])
+        return self.reachableKeys
+
+        
 
     def printTree(self):
         for k,v in self.tree.items():
             print("{}: {}".format(k, v))
 
     def minSteps(self):
-        
-        return 42
+        self.sequences = []
+        openSequences = []
+        while True:
+            steps = 0
+            sequence = []
+            while self.keys != self.allKeys:
+                self.print(cleaned=False)
+                self.cleanUp()
+                self.createTree()
+                self.findReachableKeys(self.robotPosition)
+                print("reachable = {}".format(self.reachableKeys))
+                if len(self.reachableKeys) == 0:
+                    print("Nothing reachable")
+                    break
+                elif len(self.reachableKeys) == 1:
+                    print("goto {}".format(self.reachableKeys[0]))
+                    key, addSteps = self.reachableKeys[0]
+                    self.takeKey(key)
+                    self.fullMap[self.robotPosition[1]][self.robotPosition[0]] = '.'
+                    self.robotPosition = self.keyPos[key]
+                    sequence.append(key)
+                    steps += addSteps
+                else:
+                    #raise RuntimeError("not yet implemented")
+                    # TODO obviously wrong
+                    print("goto {}".format(self.reachableKeys[0]))
+                    key, addSteps = self.reachableKeys[0]
+                    self.takeKey(key)
+                    self.fullMap[self.robotPosition[1]][self.robotPosition[0]] = '.'
+                    self.robotPosition = self.keyPos[key]
+                    sequence.append(key)
+                    steps += addSteps
+            
+            print("steps = {}; sequence = {}".format(steps, sequence))
+            self.sequences.append([steps, sequence])
+            if len(openSequences) == 0: break
+        self.sequences.sort(key=lambda x: x[0])
+        return self.sequences[0][0]
 
 def run_small_test():
     print("small Test 1")
@@ -185,20 +246,22 @@ def run_small_test():
 ########################"""
 
     a = Dungeon(string2tree(AAA))
-    a.print()
-    a.keys.add('a')
-    a.cleanUp()
-    a.print()
+    # a.print()
+    # a.keys.add('a')
+    # a.cleanUp()
+    # a.print()
+    a.minSteps()
     b = Dungeon(string2tree(BBB))
-    b.print()
-    b.takeKey('a')
-    b.print(cleaned=False)
-    b.cleanUp()
-    b.print()
-    b.createTree()
-    #b.printTree()
-    b.findReachableKeys()
-    print(b.reachableKeys)
+    # b.print()
+    # b.takeKey('a')
+    # b.print(cleaned=False)
+    # b.cleanUp()
+    # b.print()
+    # b.createTree()
+    # #b.printTree()
+    # b.findReachableKeys(b.robotPosition)
+    # print(b.reachableKeys)
+    b.minSteps()
     # c = Dungeon(string2tree(CCC))
     # c.print()
     # d = Dungeon(string2tree(DDD))
