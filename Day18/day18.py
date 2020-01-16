@@ -18,19 +18,18 @@ class Dungeon():
 
     def __init__(self, inArray):
         print("\n~~~~~~~~~~~~ new Dungeon ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
-        self.fullMap = copy(inArray)
-        self.cleanMap = copy(inArray)
+        self.fullMap = deepcopy(inArray)
+        self.cleanMap = deepcopy(inArray)
+        self.originalMap = deepcopy(inArray)
         self.cleaned = False
         self.keys = set()
         self.low   = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
         self.upper = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
         self.tree = defaultdict(list)
         self.robotPosition = (None, None)
-        self.reachableKeys = set()
         self.allKeys = set()
         self.keyPos = {}
         self.getAllKeys()
-        self.sequences = []
 
     def getAllKeys(self):
         for y, line in enumerate(self.fullMap):
@@ -123,17 +122,13 @@ class Dungeon():
         
         # finds shortest path between 2 nodes of a graph using BFS
         def bfs_shortest_path(graph, start, goal):
-            #print("{} --- {} --- {}".format(graph, start, goal))
-            #print("{} --- {}".format(start, goal))
             # keep track of explored nodes
             explored = []
             # keep track of all the paths to be checked
             queue = [[start]]
-        
             # return path if start is goal
             if start == goal:
                 return 0
-        
             # keeps looping until all possible paths have been checked
             while queue:
                 # pop the first path from the queue
@@ -151,31 +146,30 @@ class Dungeon():
                         # return path if neighbour is goal
                         if neighbour == goal:
                             return new_path
-        
                     # mark node as explored
                     explored.append(node)
-        
             # in case there's no path between the 2 nodes
             return -1
-        self.reachableKeys = []
+        # ENDE der internen Funktion
+        reachableKeys = []
         for key in self.allKeys - self.keys:
             path = bfs_shortest_path(self.tree, self.robotPosition, self.keyPos[key])
             if path != 0 and path != -1:
                 #print("key = {}; path = {}".format(key, path))
-                self.reachableKeys.append((key, len(path)-1))
+                reachableKeys.append((key, len(path)-1))
         
-        self.reachableKeys.sort(key=lambda x: x[1])
-        return self.reachableKeys
+        reachableKeys.sort(key=lambda x: x[1])
+        return reachableKeys
 
         
-
     def printTree(self):
         for k,v in self.tree.items():
             print("{}: {}".format(k, v))
 
     def minSteps(self):
-        self.sequences = []
+        sequences = []
         openSequences = []
+        knownSituation = []
         while True:
             steps = 0
             sequence = []
@@ -183,14 +177,14 @@ class Dungeon():
                 self.print(cleaned=False)
                 self.cleanUp()
                 self.createTree()
-                self.findReachableKeys(self.robotPosition)
-                print("reachable = {}".format(self.reachableKeys))
-                if len(self.reachableKeys) == 0:
+                reachableKeys = self.findReachableKeys(self.robotPosition)
+                print("reachable = {}".format(reachableKeys))
+                if len(reachableKeys) == 0:
                     print("Nothing reachable")
                     break
-                elif len(self.reachableKeys) == 1:
-                    print("goto {}".format(self.reachableKeys[0]))
-                    key, addSteps = self.reachableKeys[0]
+                elif len(reachableKeys) == 1:
+                    print("goto {}".format(reachableKeys[0]))
+                    key, addSteps = reachableKeys[0]
                     self.takeKey(key)
                     self.fullMap[self.robotPosition[1]][self.robotPosition[0]] = '.'
                     self.robotPosition = self.keyPos[key]
@@ -198,20 +192,27 @@ class Dungeon():
                     steps += addSteps
                 else:
                     #raise RuntimeError("not yet implemented")
-                    # TODO obviously wrong
-                    print("goto {}".format(self.reachableKeys[0]))
-                    key, addSteps = self.reachableKeys[0]
+                    # for possibleKeys in reachableKeys:
+                        # if sequence.append(possibleKeys) in knownSituation:
+                        #     continue
+                        # else:
+                    #print("goto {}".format(possibleKeys))
+                    print("goto {}".format(reachableKeys[-1]))
+                    #knownSituation.append(sequence.append(possibleKeys))
+                    key, addSteps = reachableKeys[0]
                     self.takeKey(key)
                     self.fullMap[self.robotPosition[1]][self.robotPosition[0]] = '.'
                     self.robotPosition = self.keyPos[key]
                     sequence.append(key)
                     steps += addSteps
+                    continue
             
             print("steps = {}; sequence = {}".format(steps, sequence))
-            self.sequences.append([steps, sequence])
+            sequences.append([steps, sequence])
             if len(openSequences) == 0: break
-        self.sequences.sort(key=lambda x: x[0])
-        return self.sequences[0][0]
+        sequences.sort(key=lambda x: x[0])
+        return sequences[0][0]
+
 
 def run_small_test():
     print("small Test 1")
@@ -259,8 +260,7 @@ def run_small_test():
     # b.print()
     # b.createTree()
     # #b.printTree()
-    # b.findReachableKeys(b.robotPosition)
-    # print(b.reachableKeys)
+    # print(b.findReachableKeys(b.robotPosition))
     b.minSteps()
     # c = Dungeon(string2tree(CCC))
     # c.print()
